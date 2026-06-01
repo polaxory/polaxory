@@ -4,6 +4,7 @@ This repository is the clean public/private build layer exported from the Hypurr
 
 ## Current product thesis
 **Give Polaxory one game idea. It returns a secure, editable Roblox production build.**
+
 First proof: a Backrooms-inspired Roblox vertical slice proving deterministic module graph, server-authoritative mechanics, resource/facility/entity/event contracts, validator reports, and Rojo-compatible output.
 
 ## Load order
@@ -24,7 +25,7 @@ Do not load the entire research pile by default. Use the knoll.
 Build **Signal Run v0** before adding more rails or lore. The next shippable artifact is the smallest Roblox playable loop that proves:
 
 ```txt
-round_started -> round_completed -> reward_granted -> reward_claimed -> next_round_started
+round_started -> round_completed -> reward_granted -> reward_shown -> reward_claimed -> next_round_started
 ```
 
 Current implementation target:
@@ -34,7 +35,7 @@ Current implementation target:
 3. Keep reward proof isolated from raw player IDs via `RoundCompletionRewards.luau` and `RoundCompletionRewardPanel.client.luau`.
 4. Keep replay requests server-owned: the client sends intent only; idempotency and cooldown checks must happen before starting the next round.
 
-Acceptance check: each transition in the proof loop should be traceable to one server-owned state change and one player-visible feedback point before new rails or lore are added.
+Acceptance check: each transition in the proof loop should be traceable to one server-owned state change and, for the reward path, the player-visible `reward_shown` feedback point before new rails or lore are added.
 
 ## Small-change rule
 When improving the repo, keep each commit to one narrow artifact or clarification so the rails stay auditable. Prefer tightening an existing active doc or file over adding a new artifact unless the current load order needs it.
