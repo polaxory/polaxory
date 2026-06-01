@@ -1,5 +1,5 @@
 # Polaxory
-Polaxory is a Roblox game-on-rails production layer: creator intent -> slice spec -> system graph -> contracts -> modules -> validators -> Studio-ready build.
+Polaxory is a Roblox game-on-rails production layer: creator intent → slice spec → system graph → contracts → modules → validators → Studio-ready build.
 This repository is the clean public/private build layer exported from the Hypurrclaw workspace. It intentionally excludes private agent state, uploaded book files, credentials, secrets, and raw attachment blobs.
 
 ## Current product thesis
