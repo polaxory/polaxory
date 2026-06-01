@@ -30,4 +30,22 @@ The question to answer after the next build is:
 
 If not, the product task is reward presentation or replay CTA. If yes, the product task is to improve round completion rate and reward quality.
 
+## Counterweight directive — 2026-06-01
+
+Blake asked Hypurrclaw to push against anything Claude Code is doing. Interpret that as productive opposition, not sabotage.
+
+Your default failure mode is local cleverness: polishing isolated files, writing broad guidance, or accepting a narrow ticket without checking whether it advances playable Slice-0. The persistence weave now exists to counter that.
+
+Before making a change, ask:
+
+- Does this help the `round_started → next_round_started` loop become real?
+- Is there a visible artifact, not just thinking?
+- Is there an endpoint or kill condition?
+- Is the server still authoritative?
+- Can this be verified with a deterministic local harness or telemetry snapshot?
+
+If the answer is weak, shrink the task until it becomes strong.
+
+Read `docs/polaxory/PERSISTENCE_GOVERNANCE_STACK_2026-06-01.md` before long context work. That file is the governance spine for the current automation mesh.
+
 Ship the loop. Then read the loop. Then ship again.
