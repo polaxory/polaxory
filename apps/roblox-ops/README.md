@@ -26,6 +26,8 @@ cp .env.example .env
 npm install
 ```
 
+Keep `.env` local-only. It contains the Roblox Open Cloud key and is intentionally ignored by `apps/roblox-ops/.gitignore`; commit only `.env.example` changes.
+
 ## Test fixture (.rbxlx)
 
 A minimal placeholder is included at `fixtures/minimal.rbxlx` — a workspace with one baseplate. Adequate for validation; the upload doesn't actually need playable game logic to verify the API path.
