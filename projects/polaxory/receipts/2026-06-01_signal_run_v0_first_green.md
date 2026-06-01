@@ -22,7 +22,8 @@ Both landings shipped with `stylua --check src` failing on main, blocking every 
 |---|---|
 | `src/server/RoundCompletionRewards.luau` | Reformatted with stylua 0.20.0 to match `aftman.toml`'s pinned CI version. Renamed the unused `payload` parameter on `claimPendingReward` to `_payload` so selene's `unused_variable` warning clears. No logic changes. |
 | `src/client/RoundCompletionRewardPanel.client.luau` | Reformatted with stylua 0.20.0. No logic changes. |
-| `src/server/SignalRunCourse.server.luau` *(new)* | Backrooms Slice 0 corridor. Builds a yellow-wallpaper hallway (floor, two side walls, back/front end caps, gray drop ceiling, four fluorescent fixtures with PointLights) under `Workspace.PolaxorySignalRunCourse`. Place a SpawnLocation near the back wall, paint two thin floor-plate triggers (`EnterTrigger` and `ExitTrigger`). Wires `EnterTrigger.Touched` → `RoundCompletionRewards.startRound(player)` and `ExitTrigger.Touched` → `RoundCompletionRewards.completeRound(player)` with a 2-second per-player debounce. Adjusts `Lighting.Ambient` so the fluorescents read as the source. Adds BillboardGui labels (ROOM 0 / ENTER, EXIT / CLAIM SIGNAL). |
+| `src/server/SignalRunCourse.server.luau` *(new)* | **Course binder, not a course builder.** Finds two BaseParts (`EnterTrigger`, `ExitTrigger`) under `Workspace.PolaxorySignalRunCourse` *that the operator placed in Studio* and attaches `Touched` handlers. `EnterTrigger.Touched` → `RoundCompletionRewards.startRound(player)`; `ExitTrigger.Touched` → `RoundCompletionRewards.completeRound(player)`. Per-player 2-second debounce. The script creates no geometry, no walls, no lights — Studio owns the world, `src/` owns the receipt loop. If either trigger is missing, the script warns clearly and exits early without blocking the rest of the server. |
+| `scripts/dev-sync.sh` *(new)* | Pre-flight + setup guide for the hand-built-Studio + Rojo-synced-`src/` workflow. Verifies `aftman` + `rojo` are installed, runs `aftman install`, sanity-builds the project to confirm `src/` compiles, then prints the exact Studio steps to wire the `.rbxl` to the script (build the folder + triggers, install the Rojo plugin, `rojo serve`, connect, Play). |
 | `projects/polaxory/receipts/2026-06-01_signal_run_v0_first_green.md` *(new)* | This file. |
 
 ## Acceptance mapping
@@ -71,18 +72,27 @@ Local verification used the exact stylua 0.20.0 binary pinned in `aftman.toml`, 
 
 ## Player-driven receipt path — Backrooms Slice 0
 
-The Angel Signal Integrator's pressure was "graybox start/finish path so a fresh player can drive the receipt." The Waiting Fan escalated it: this should be a **Backrooms vertical slice**, not a generic obstacle course. This PR delivers the Backrooms-themed version.
+The Angel Signal Integrator's pressure was "graybox start/finish path so a fresh player can drive the receipt." The Waiting Fan escalated it: this should be a **Backrooms vertical slice**, not a generic obstacle course. The operator is hand-building the corridor in Studio (`~/polaxory/roblox-game-backrooms-slice/Polaxory_Backrooms_Slice0.rbxl`). The earlier version of this script built its own geometry at runtime and **deleted the hand-built corridor on every server start** — the wrong default. This PR's final version of `SignalRunCourse.server.luau` reverses that: Studio owns the world, the script finds named triggers and wires the receipt loop.
 
-The claim / run-again UI binding was already complete on main (the panel's `primary.Activated` handler fires `ClaimRewardRequested:FireServer(...)` and `RunAgainRequested:FireServer(...)` based on `currentMode`). The world-side triggers were the missing piece. `SignalRunCourse.server.luau` builds the enclosed liminal corridor and wires the triggers.
+The claim / run-again UI binding was already complete on main (the panel's `primary.Activated` handler fires `ClaimRewardRequested:FireServer(...)` and `RunAgainRequested:FireServer(...)` based on `currentMode`). The world-side triggers were the missing piece. `SignalRunCourse.server.luau` now expects the operator's Studio file to contain a `PolaxoryBackroomsSlice0` folder with `EnterTrigger` and `ExitTrigger` BaseParts inside; on server start the script attaches `Touched` handlers to those parts.
 
-Player flow:
+Operator-side setup (in Studio, one time):
 
-1. Spawn inside the corridor at the back-wall SpawnLocation (`EnterRoom`).
-2. Walk forward across the green `EnterTrigger` floor plate → `RoundCompletionRewards.startRound(player)` → `round_started` emits.
-3. Walk down the corridor and step onto the red `ExitTrigger` plate → `RoundCompletionRewards.completeRound(player)` → `round_completed` + `reward_granted` emit, server `fireState` sends `RoundRewardStateChanged` to the client, reward panel becomes visible.
+1. Open `Polaxory_Backrooms_Slice0.rbxl`.
+2. Build the Backrooms corridor however you want it — walls, ceiling, lighting, atmosphere. The script will not touch any of it.
+3. Under `Workspace`, create a Folder named `PolaxoryBackroomsSlice0`.
+4. Drop two thin BaseParts inside the folder: name one `EnterTrigger` (near the spawn), the other `ExitTrigger` (at the far end). Any geometry is fine.
+
+Player flow (once the .rbxl is set up):
+
+1. Player spawns in the corridor.
+2. Player walks across `EnterTrigger` → `RoundCompletionRewards.startRound(player)` → `round_started` emits.
+3. Player walks to `ExitTrigger` → `RoundCompletionRewards.completeRound(player)` → `round_completed` + `reward_granted` emit, server `fireState` sends `RoundRewardStateChanged` to the client, reward panel becomes visible.
 4. Click Claim → `reward_claimed` emits, panel switches to Run Again mode.
 5. Click Run Again → `requestRunAgain` → `next_round_started` emits, panel hides.
-6. Player walks back through the corridor onto the ExitTrigger again to loop. (EnterTrigger's debounce prevents a second `round_started`; the next round is the one created server-side by `requestRunAgain`.)
+6. Player walks back to `ExitTrigger` to loop. (Per-trigger 2-second debounce keeps a single physical pass from double-firing; the next round's `round_started` does NOT re-fire — it's the new server round created internally by `requestRunAgain`.)
+
+The operator can run `./scripts/dev-sync.sh` from the repo root to pre-flight the tools (`aftman`, `rojo`), sanity-build `src/` via Rojo, and see the exact Studio steps.
 
 ## Vision-lock context
 
