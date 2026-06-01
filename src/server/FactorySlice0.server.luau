@@ -1,11 +1,15 @@
 local FactoryBlackboard = require(script.Parent.FactoryBlackboard)
-local TaskQueue = require(script.Parent.TaskQueue)
+local ResourceExecutor = require(script.Parent.ResourceExecutor)
 local SupervisorAgent = require(script.Parent.SupervisorAgent)
+local TaskQueue = require(script.Parent.TaskQueue)
 local Validators = require(script.Parent.Validators)
+local WorkerBehaviorTree = require(script.Parent.WorkerBehaviorTree)
 
 local blackboard = FactoryBlackboard.new()
 local taskQueue = TaskQueue.new(blackboard)
 local supervisor = SupervisorAgent.new(taskQueue)
+local executor = ResourceExecutor.new(blackboard)
+local workers = WorkerBehaviorTree.new(taskQueue, executor)
 
 blackboard:addStation({
 	id = "extractor-1",
@@ -26,6 +30,10 @@ blackboard:addWorker({ id = "fixer-1", role = "Fixer" })
 
 for _, suggestion in supervisor:inspect(blackboard:snapshot()) do
 	supervisor:applySuggestion(suggestion)
+end
+
+for _, result in workers:stepAll() do
+	print("Polaxory worker step", result.workerId, result.status, result.taskId or "no-task")
 end
 
 local errors = Validators.validateSnapshot(blackboard:snapshot())

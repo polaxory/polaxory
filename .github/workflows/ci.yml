@@ -1,0 +1,23 @@
+name: Polaxory CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  luau-guardrails:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Aftman
+        uses: ok-nick/setup-aftman@v0.4.2
+      - name: Install tools
+        run: aftman install
+      - name: Format check
+        run: stylua --check src
+      - name: Lint
+        run: selene src
+      - name: Rojo build
+        run: rojo build default.project.json --output build.rbxlx
