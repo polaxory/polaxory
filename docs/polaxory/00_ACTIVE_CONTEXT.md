@@ -61,13 +61,21 @@ creator prompt
 2. `POLAXORY_SYSTEM_GRAPH_SCHEMA_v1.md` — graph schema: node/edge types, Backrooms Slice 0 draft graph, scenario shape, validation rules, report shape.
 3. `POLAXORY_VALIDATOR_CONTRACTS_v0.md` — validator suite.
 
-## Canonical next artifacts
+## Current implementation focus
 
-1. `POLAXORY_BACKROOMS_SLICE_0_GDD.md`
-2. `POLAXORY_BACKROOMS_SLICE_0_GRAPH.json`
-3. `polaxory-rails/` repo skeleton
-4. minimal pure-JSON validator implementation plan
-5. first Rojo/TestEZ/Open Cloud CI plan
+Build **Signal Run v0** before adding more rails or lore. The next shippable artifact is the smallest Roblox playable loop that proves:
+
+```txt
+round_started -> round_completed -> reward_granted -> reward_claimed -> next_round_started
+```
+
+Implementation target:
+
+1. Wire the existing `src/shared`, `src/server`, and `src/client` skeleton around the proof loop instead of adding parallel scaffolding.
+2. Keep telemetry aggregate-first in `TelemetryBuffer.luau` and `RoundTelemetryLoop.server.luau`.
+3. Keep reward proof isolated from raw player IDs via `RoundCompletionRewards.luau` and `RoundCompletionRewardPanel.client.luau`.
+
+Acceptance check: each transition in the proof loop should be traceable to one server-owned state change and one player-visible feedback point before new rails or lore are added.
 
 ## Required stack
 
