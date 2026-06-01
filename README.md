@@ -33,6 +33,8 @@ Current implementation target:
 2. Keep telemetry aggregate-first in `TelemetryBuffer.luau` and `RoundTelemetryLoop.server.luau`.
 3. Keep reward proof isolated from raw player IDs via `RoundCompletionRewards.luau` and `RoundCompletionRewardPanel.client.luau`.
 
+Acceptance check: each transition in the proof loop should be traceable to one server-owned state change and one player-visible feedback point before new rails or lore are added.
+
 ## Small-change rule
 When improving the repo, keep each commit to one narrow artifact or clarification so the rails stay auditable.
 
