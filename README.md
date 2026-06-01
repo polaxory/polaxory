@@ -22,15 +22,19 @@ Do not load the entire research pile by default. Use the knoll.
 - `docs/polaxory/POLAXORY_VALIDATOR_CONTRACTS_v0.md`
 
 ## Current next action
-Build the next concrete artifacts in this order:
-1. `docs/polaxory/POLAXORY_BACKROOMS_SLICE_0_GDD.md` — playable vertical-slice design brief.
-2. `docs/polaxory/POLAXORY_BACKROOMS_SLICE_0_GRAPH.json` — first deterministic system graph fixture.
-3. `polaxory-rails/README.md` — repo skeleton map for generated modules, validators, and output.
-4. `docs/polaxory/POLAXORY_VALIDATOR_IMPLEMENTATION_PLAN_v0.md` — minimal validator implementation plan.
-5. `.github/workflows/ci.yml` — first Rojo/TestEZ/Open Cloud CI plan.
+Build **Signal Run v0** before adding more rails or lore. The next shippable artifact is the smallest Roblox playable loop that proves:
+
+```txt
+round_started -> round_completed -> reward_granted -> reward_claimed -> next_round_started
+```
+
+First implementation target:
+1. Create the Signal Run file skeleton under `src/shared`, `src/server`, and `src/client`.
+2. Implement aggregate-first `TelemetrySink.server.luau`.
+3. Add `SignalRunTestHarness.server.luau` that prints the ordered proof loop once without raw player IDs.
 
 ## Small-change rule
 When improving the repo, keep each commit to one narrow artifact or clarification so the rails stay auditable.
 
 ## Cut line
-No more pitch sprawl. Build rails, graph, validators, slice, repo skeleton.
+No more pitch sprawl. Build the playable loop, prove the reward claim, then improve feel.
