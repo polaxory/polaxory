@@ -1,0 +1,94 @@
+{
+  "id": "polaxory",
+  "name": "Polaxory",
+  "route": "/projects/polaxory",
+  "mission": "Make Polaxory the proof that a small Roblox studio with an AI operating layer can out-ship larger teams.",
+  "thesis": "Roblox is the inference engine. Polaxory is the studio loop. Hypurrclaw is the operating layer that turns signal into shipped updates.",
+  "audiences": [
+    {
+      "name": "Players",
+      "value": "Better Roblox experiences that improve faster because the studio notices what players actually do."
+    },
+    {
+      "name": "Creators",
+      "value": "A command room that turns messy game, repo, and market signal into the next shippable update."
+    },
+    {
+      "name": "Infrastructure users",
+      "value": "Proof that agentic workflows can create durable production loops, not just chatbot answers."
+    },
+    {
+      "name": "Investors",
+      "value": "A wedge into Roblox studios: one successful game loop demonstrates a repeatable AI operating layer for creative production."
+    }
+  ],
+  "nextProfitableShip": {
+    "title": "Round completion reward loop",
+    "why": "Players need a clearer reason to replay after a completed round.",
+    "expectedImpact": "Higher replay intent and retention.",
+    "risk": "Low",
+    "status": "ready_for_task",
+    "actions": [
+      "Generate patch task",
+      "Create reward-loop spec",
+      "Queue implementation commit"
+    ]
+  },
+  "signals": [
+    {
+      "lane": "player",
+      "label": "Replay intent after round completion",
+      "state": "needs_instrumentation"
+    },
+    {
+      "lane": "game_page",
+      "label": "Visits, favorites, likes, thumbnail/title conversion",
+      "state": "needs_game_url"
+    },
+    {
+      "lane": "repo",
+      "label": "Latest commits and validator status",
+      "state": "watching"
+    },
+    {
+      "lane": "competitor",
+      "label": "Adjacent Roblox games and update cadence",
+      "state": "needs_targets"
+    }
+  ],
+  "operators": [
+    {
+      "name": "Commit Watcher",
+      "purpose": "Watch repo changes and summarize build movement.",
+      "status": "active"
+    },
+    {
+      "name": "Safe Auto Commit",
+      "purpose": "Turn approved product intent into repo artifacts.",
+      "status": "active"
+    },
+    {
+      "name": "Signal Reader",
+      "purpose": "Convert Roblox/project signals into prioritized ship suggestions.",
+      "status": "planned"
+    },
+    {
+      "name": "Patch Generator",
+      "purpose": "Turn the chosen next ship into implementation tasks and patches.",
+      "status": "planned"
+    }
+  ],
+  "continueShipping": {
+    "primaryAction": "create_task",
+    "task": {
+      "title": "Spec and implement round completion reward loop",
+      "description": "Create the first retention-focused Polaxory game improvement: a short reward loop after round completion that gives players a reason to replay.",
+      "acceptanceCriteria": [
+        "Reward appears immediately after round completion.",
+        "Reward communicates progress or unlock intent.",
+        "Loop does not require paid mechanics in v0.",
+        "Implementation can be measured through replay/session signals later."
+      ]
+    }
+  }
+}
