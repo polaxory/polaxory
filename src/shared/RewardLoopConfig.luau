@@ -1,8 +1,7 @@
 --!strict
 
 -- Polaxory round completion reward loop v0.
--- This is the product contract first; live persistence and analytics can attach later.
-
+-- Server owns reward state. Client only renders and sends claim / replay intent.
 local RewardLoopConfig = {}
 
 RewardLoopConfig.RoundCompletionReward = {
@@ -11,15 +10,20 @@ RewardLoopConfig.RoundCompletionReward = {
 	currency = "reward_keys",
 	amount = 1,
 	progressLabel = "Earn keys by finishing rounds. Keys unlock cosmetic rewards later.",
-	primaryCta = "Play again",
+	primaryCta = "Claim reward",
+	replayCta = "Run again",
 }
 
 RewardLoopConfig.Events = {
+	RoundStarted = "round_started",
 	RoundCompleted = "round_completed",
-	RewardGranted = "completion_reward_granted",
-	RewardShown = "completion_reward_shown",
-	RewardClaimed = "completion_reward_claimed",
-	ReplayClicked = "completion_replay_clicked",
+	RewardGranted = "reward_granted",
+	RewardShown = "reward_shown",
+	RewardClaimed = "reward_claimed",
+	RejectedClaim = "rejected_claim",
+	RejectedRunAgain = "rejected_run_again",
+	ReplayClicked = "replay_clicked",
+	NextRoundStarted = "next_round_started",
 }
 
 return RewardLoopConfig
