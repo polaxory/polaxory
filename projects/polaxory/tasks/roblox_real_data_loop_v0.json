@@ -1,0 +1,46 @@
+{
+  "id": "roblox_real_data_loop_v0",
+  "project": "polaxory",
+  "status": "queued",
+  "priority": "p0",
+  "title": "Close the first Roblox real-data loop",
+  "why": "Polaxory cannot iterate faster until shipped Roblox behavior produces aggregate data that changes the next task.",
+  "problem": "The current repo has markdown strategy and early implementation seams, but no verified first-party Roblox telemetry or audited game-data research baseline.",
+  "scope": [
+    "Define safe gameplay telemetry event schema",
+    "Emit round reward loop events from Roblox code seams",
+    "Normalize exports into aggregate repo snapshots",
+    "Audit existing game-data markdown evidence level",
+    "Expose latest snapshot in the Polaxory command room"
+  ],
+  "first_events": [
+    "session_started",
+    "round_started",
+    "round_completed",
+    "reward_granted",
+    "reward_claimed",
+    "next_round_started"
+  ],
+  "acceptance_criteria": [
+    "Telemetry schema exists and avoids raw private player identifiers in committed artifacts",
+    "Round-completion reward seam emits at least reward-loop events",
+    "Aggregate snapshot files can be generated under data/polaxory/roblox-snapshots/YYYY-MM-DD",
+    "Research markdown has evidence labels or is treated as assumption",
+    "/projects/polaxory can display actual/latest snapshot values when present"
+  ],
+  "next_patch_order": [
+    "Add shared telemetry event contract",
+    "Add server-side telemetry queue module",
+    "Wire RoundCompletionRewards to telemetry",
+    "Add roblox-ops snapshot normalizer",
+    "Add command-room data panel fallback: No real data captured yet"
+  ],
+  "metrics": [
+    "round_completion_rate",
+    "reward_claim_rate",
+    "next_round_start_rate_after_reward",
+    "session_count",
+    "returning_player_proxy"
+  ],
+  "evidence_policy": "All game-data claims must be labeled first_party, roblox_public, external_public, playtest, desk_research, or assumption."
+}

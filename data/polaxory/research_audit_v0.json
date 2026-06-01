@@ -1,0 +1,36 @@
+{
+  "project": "polaxory",
+  "audit_version": "v0",
+  "created_at": "2026-06-01T17:49:08Z",
+  "summary": "Baseline audit: strategy markdown exists, but real Roblox first-party data has not yet been captured into committed aggregate artifacts.",
+  "evidence_levels": [
+    "first_party",
+    "roblox_public",
+    "external_public",
+    "playtest",
+    "desk_research",
+    "assumption"
+  ],
+  "current_findings": [
+    {
+      "finding": "Polaxory has a clear mission/thesis and command-room direction.",
+      "evidence_level": "desk_research",
+      "decision_impact": "Useful for alignment, not sufficient for gameplay iteration."
+    },
+    {
+      "finding": "The round-completion reward loop is the first measurable retention loop.",
+      "evidence_level": "assumption",
+      "decision_impact": "Should be instrumented first so we can prove or disprove it."
+    },
+    {
+      "finding": "No committed aggregate first-party Roblox telemetry snapshot is present in the baseline audit.",
+      "evidence_level": "first_party",
+      "decision_impact": "Build telemetry before adding more markdown strategy."
+    }
+  ],
+  "next_required_artifacts": [
+    "data/polaxory/roblox-snapshots/YYYY-MM-DD/experience_summary.json",
+    "data/polaxory/roblox-snapshots/YYYY-MM-DD/reward_loop_funnel.json",
+    "data/polaxory/roblox-snapshots/YYYY-MM-DD/research_sources.json"
+  ]
+}
