@@ -1,0 +1,37 @@
+{
+  "id": "polaxory.close_measurement_loop.v1",
+  "status": "ready",
+  "priority": "P0",
+  "createdAt": "2026-06-01T17:54:03Z",
+  "title": "Close the first playable measurement loop",
+  "objective": "Wire the reward loop into the telemetry instrument so one deterministic local run produces a full aggregate snapshot.",
+  "eventSpine": [
+    "round_started",
+    "round_completed",
+    "reward_granted",
+    "reward_claimed",
+    "next_round_started"
+  ],
+  "implementationSteps": [
+    "Import TelemetryInstrument from src/shared/TelemetryInstrument.luau where event names or required fields are needed.",
+    "Emit round_started from the round entry path.",
+    "Emit round_completed from the round terminal state.",
+    "Emit reward_granted from src/server/RoundCompletionRewards.luau.",
+    "Emit reward_claimed from the reward panel claim path or its server relay.",
+    "Emit next_round_started when the same session starts another round after completion or claim.",
+    "Add a fake/local harness that drives one complete loop and serializes an aggregate snapshot."
+  ],
+  "acceptanceCriteria": [
+    "A local deterministic run can produce all five events in order.",
+    "The generated snapshot contains only aggregate metrics and no raw Roblox UserId.",
+    "The snapshot includes completion_rate, reward_claim_rate, and next_round_rate_after_claim.",
+    "The implementation can identify the biggest drop-off point in the loop.",
+    "Docs explain how to read the snapshot and choose the next product task."
+  ],
+  "nonGoals": [
+    "Production analytics vendor integration",
+    "Player-level attribution dashboards",
+    "Economy balancing beyond the first reward claim loop",
+    "Storing raw player identities in committed data"
+  ]
+}
