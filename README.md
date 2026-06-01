@@ -38,5 +38,16 @@ Acceptance check: each transition in the proof loop should be traceable to one s
 ## Small-change rule
 When improving the repo, keep each commit to one narrow artifact or clarification so the rails stay auditable.
 
+## Local guardrails
+Before committing code changes to the playable loop, run the same checks CI uses:
+
+```bash
+stylua --check src
+selene src
+rojo build default.project.json --output build.rbxlx
+```
+
+These checks keep local edits aligned with the repo's format, lint, and Studio-build expectations.
+
 ## Cut line
 No more pitch sprawl. Build the playable loop, prove the reward claim, then improve feel.
