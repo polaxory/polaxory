@@ -1,0 +1,58 @@
+{
+  "id": "build_signal_run_playable_v0",
+  "project": "polaxory",
+  "status": "ready_for_implementation",
+  "priority": "P0",
+  "title": "Build Signal Run v0 playable wedge",
+  "objective": "Create the smallest tangible Roblox playable that proves the round/reward/retention telemetry loop.",
+  "core_loop": [
+    "round_started",
+    "round_completed",
+    "reward_granted",
+    "reward_claimed",
+    "next_round_started"
+  ],
+  "game_pitch": "A short corrupted-signal corridor runner where players collect SignalFragments, reach a relay gate, claim a reward, and immediately choose to run again.",
+  "must_build": [
+    "Lobby/start pad",
+    "Short 20-45 second obstacle lane",
+    "Finish/relay gate trigger",
+    "SignalFragment collectible",
+    "Server-owned round lifecycle",
+    "Server-owned reward grant",
+    "Client reward panel placeholder",
+    "Run Again prompt",
+    "Telemetry event emission for the full loop",
+    "Deterministic local/test harness that emits one aggregate snapshot"
+  ],
+  "do_not_build_yet": [
+    "Cosmetics shop",
+    "Real economy",
+    "Procedural generation",
+    "Multiplayer matchmaking",
+    "Complex combat",
+    "Deep lore systems",
+    "Monetization"
+  ],
+  "suggested_files": [
+    "src/shared/TelemetryEventContract.luau",
+    "src/shared/RoundTypes.luau",
+    "src/server/RoundService.server.luau",
+    "src/server/RoundCompletionRewards.luau",
+    "src/server/TelemetrySink.server.luau",
+    "src/server/SignalRunTestHarness.server.luau",
+    "src/client/RoundCompletionRewardPanel.client.luau",
+    "src/client/RunAgainPrompt.client.luau"
+  ],
+  "acceptance_criteria": [
+    "A local player can start a round from a start trigger",
+    "A local player can complete the run through a finish trigger",
+    "The server grants a structured reward payload",
+    "The client displays a placeholder reward panel",
+    "The player can claim the reward",
+    "The player can choose Run Again",
+    "The ordered event loop is emitted once end-to-end",
+    "A deterministic aggregate telemetry snapshot can be generated without raw player IDs"
+  ],
+  "claude_relay": "Build the smallest Roblox playable, not another architecture cathedral. Wire the existing telemetry and reward seams into Signal Run. The proof is one local round that completes, grants, claims, and starts again. If tempted to add lore, shop, cosmetics, procedural gen, or monetization, stop. Ship the loop."
+}
