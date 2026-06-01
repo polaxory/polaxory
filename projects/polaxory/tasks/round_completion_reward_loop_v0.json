@@ -1,0 +1,61 @@
+{
+  "id": "round_completion_reward_loop_v0",
+  "project": "polaxory",
+  "status": "queued_for_implementation",
+  "createdAt": "2026-06-01T17:47:28Z",
+  "title": "Spec and implement round completion reward loop",
+  "intent": "Create the first retention-focused Polaxory game improvement: a short reward loop after round completion that gives players a reason to replay.",
+  "playerPromise": "Finishing a round should feel like progress, not a dead end.",
+  "whyNow": "The command room's current strongest signal is replay intent after round completion. A visible non-paid reward loop is low risk and creates a measurable retention hook.",
+  "scope": {
+    "include": [
+      "Reward presentation immediately after round completion",
+      "A small progress currency or key awarded for completion",
+      "A replay CTA that explains the next achievable reward",
+      "Instrumentation events for reward_shown, reward_claimed, and replay_clicked"
+    ],
+    "exclude": [
+      "Paid mechanics",
+      "Randomized gambling-style monetization",
+      "Complex inventory economy",
+      "Live Roblox API integration in this task"
+    ]
+  },
+  "implementationPlan": [
+    {
+      "step": 1,
+      "name": "Define reward contract",
+      "output": "Shared reward-loop config and task spec"
+    },
+    {
+      "step": 2,
+      "name": "Add server completion hook",
+      "output": "Server module can grant v0 completion reward from round result"
+    },
+    {
+      "step": 3,
+      "name": "Add client reward surface",
+      "output": "Round-end UI can show reward, progress, and replay CTA"
+    },
+    {
+      "step": 4,
+      "name": "Add analytics seam",
+      "output": "Named events exist even before analytics backend is wired"
+    }
+  ],
+  "acceptanceCriteria": [
+    "Reward appears immediately after round completion.",
+    "Reward communicates progress or unlock intent.",
+    "Loop does not require paid mechanics in v0.",
+    "Implementation can be measured through replay/session signals later.",
+    "Task can be picked up by a patch generator without reading the manifesto docs."
+  ],
+  "measurement": {
+    "primaryMetric": "Replay click rate after completed round",
+    "secondaryMetrics": [
+      "Reward claim rate",
+      "Second-round starts per session",
+      "Completion-to-exit dropoff"
+    ]
+  }
+}
