@@ -32,7 +32,12 @@ TelemetryEventContract.RequiredFields = {
 	"properties",
 }
 
-function TelemetryEventContract.makeEvent(eventName: string, userIdHash: string, sessionId: string, properties: {[string]: any})
+function TelemetryEventContract.makeEvent(
+	eventName: string,
+	userIdHash: string,
+	sessionId: string,
+	properties: { [string]: any }
+)
 	return {
 		event_name = eventName,
 		schema_version = TelemetryEventContract.SchemaVersion,

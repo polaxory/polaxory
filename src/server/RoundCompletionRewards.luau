@@ -20,13 +20,15 @@ function RoundCompletionRewards.grantForCompletedRound(player: Player): Completi
 	-- Persistence should attach here after the round loop is verified in-game.
 	local reward = RewardLoopConfig.RoundCompletionReward
 
-	print(string.format(
-		"[Polaxory] %s: %s +%d for %s",
-		RewardLoopConfig.Events.RewardGranted,
-		reward.currency,
-		reward.amount,
-		player.Name
-	))
+	print(
+		string.format(
+			"[Polaxory] %s: %s +%d for %s",
+			RewardLoopConfig.Events.RewardGranted,
+			reward.currency,
+			reward.amount,
+			player.Name
+		)
+	)
 
 	return {
 		id = reward.id,

@@ -8,14 +8,16 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RewardLoopConfig = require(ReplicatedStorage:WaitForChild("RewardLoopConfig"))
 
 local function showRewardPanel(reward)
-	print(string.format(
-		"[Polaxory] %s: %s +%d. %s CTA=%s",
-		RewardLoopConfig.Events.RewardShown,
-		reward.currency,
-		reward.amount,
-		reward.progressLabel,
-		reward.primaryCta
-	))
+	print(
+		string.format(
+			"[Polaxory] %s: %s +%d. %s CTA=%s",
+			RewardLoopConfig.Events.RewardShown,
+			reward.currency,
+			reward.amount,
+			reward.progressLabel,
+			reward.primaryCta
+		)
+	)
 end
 
 -- Temporary preview payload so the reward loop can be validated before UI polish.
