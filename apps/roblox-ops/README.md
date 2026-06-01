@@ -20,7 +20,7 @@ If all four steps work, the Open Cloud upload primitive is real and we can build
 ## Setup
 
 ```bash
-cd /Users/blake.jaraczeski/polaxory/roblox-ops
+cd apps/roblox-ops
 cp .env.example .env
 # fill in ROBLOX_API_KEY, ROBLOX_UNIVERSE_ID, ROBLOX_PLACE_ID
 npm install
@@ -57,7 +57,7 @@ npm run validate
 
 Uploads the configured `.rbxlx` to the configured place. Defaults to `versionType=Saved` so the file is uploaded but not pushed live to players. Change to `Published` in `.env` only when you actually want to ship.
 
-Success: HTTP 200, JSON response with `versionNumber`, log line `✓ END-TO-END VERIFIED`.
+Success: HTTP 200, JSON response with `versionNumber`, log line `✅ END-TO-END VERIFIED`.
 
 Failure: error printed to stderr with status code and response body. Common failures:
 
