@@ -1,6 +1,5 @@
 # Polaxory RobloxOps — v0.1
-
-The Roblox-making surface of Polaxory's stack. Per ROBLOXOPS.md: wave-making (original IP that other creators want to derive from), not wave-catching (clone trending games).
+The Roblox-making surface of Polaxory's stack. This app follows Polaxory's wave-making thesis: original IP that other creators want to derive from, not wave-catching clones of trending games.
 
 v0.1 ships only the Open Cloud API validation harness. Full surface — concept generation, fleet management, deployment pipeline, retention monitoring — comes after operator approval of `wave-attempts/001-agents-concept-brief.md`.
 
