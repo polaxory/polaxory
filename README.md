@@ -4,6 +4,7 @@ This repository is the clean public/private build layer exported from the Hypurr
 
 ## Current product thesis
 **Give Polaxory one game idea. It returns a secure, editable Roblox production build.**
+
 First proof: a Backrooms-inspired Roblox vertical slice proving deterministic module graph, server-authoritative mechanics, resource/facility/entity/event contracts, validator reports, and Rojo-compatible output.
 
 ## Load order
@@ -26,7 +27,7 @@ Build the next concrete artifacts in this order:
 2. `docs/polaxory/POLAXORY_BACKROOMS_SLICE_0_GRAPH.json` — first deterministic system graph fixture.
 3. `polaxory-rails/README.md` — repo skeleton map for generated modules, validators, and output.
 4. `docs/polaxory/POLAXORY_VALIDATOR_IMPLEMENTATION_PLAN_v0.md` — minimal validator implementation plan.
-5. `.github/workflows/polaxory-rails-ci.yml` — first Rojo/TestEZ/Open Cloud CI plan.
+5. `.github/workflows/ci.yml` — first Rojo/TestEZ/Open Cloud CI plan.
 
 ## Cut line
 No more pitch sprawl. Build rails, graph, validators, slice, repo skeleton.
