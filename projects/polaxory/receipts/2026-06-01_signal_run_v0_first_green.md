@@ -22,7 +22,7 @@ Both landings shipped with `stylua --check src` failing on main, blocking every 
 |---|---|
 | `src/server/RoundCompletionRewards.luau` | Reformatted with stylua 0.20.0 to match `aftman.toml`'s pinned CI version. Renamed the unused `payload` parameter on `claimPendingReward` to `_payload` so selene's `unused_variable` warning clears. No logic changes. |
 | `src/client/RoundCompletionRewardPanel.client.luau` | Reformatted with stylua 0.20.0. No logic changes. |
-| `src/server/SignalRunCourse.server.luau` *(new)* | Minimum graybox course so a fresh player can drive the receipt without the test harness. Builds a Platform + SpawnLocation + StartPad + FinishPad under `Workspace.PolaxorySignalRunCourse`. Wires `StartPad.Touched` → `RoundCompletionRewards.startRound(player)` and `FinishPad.Touched` → `RoundCompletionRewards.completeRound(player)`, each with a 2-second per-player debounce so a single physical touch produces a single call. Adds BillboardGui labels (START / FINISH) so a player can orient without reading docs. |
+| `src/server/SignalRunCourse.server.luau` *(new)* | Backrooms Slice 0 corridor. Builds a yellow-wallpaper hallway (floor, two side walls, back/front end caps, gray drop ceiling, four fluorescent fixtures with PointLights) under `Workspace.PolaxorySignalRunCourse`. Place a SpawnLocation near the back wall, paint two thin floor-plate triggers (`EnterTrigger` and `ExitTrigger`). Wires `EnterTrigger.Touched` → `RoundCompletionRewards.startRound(player)` and `ExitTrigger.Touched` → `RoundCompletionRewards.completeRound(player)` with a 2-second per-player debounce. Adjusts `Lighting.Ambient` so the fluorescents read as the source. Adds BillboardGui labels (ROOM 0 / ENTER, EXIT / CLAIM SIGNAL). |
 | `projects/polaxory/receipts/2026-06-01_signal_run_v0_first_green.md` *(new)* | This file. |
 
 ## Acceptance mapping
@@ -69,20 +69,24 @@ The spec is intentionally a tiny self-contained harness — it does not require 
 
 Local verification used the exact stylua 0.20.0 binary pinned in `aftman.toml`, and selene 0.31.0 (newer than CI's 0.27.1 but compatible for these lints).
 
-## Player-driven receipt path
+## Player-driven receipt path — Backrooms Slice 0
 
-The Angel Signal Integrator's next pressure was "build the graybox start/finish path + real claim/run-again UI binding so a fresh player can manually drive the receipt without the harness." This PR delivers it.
+The Angel Signal Integrator's pressure was "graybox start/finish path so a fresh player can drive the receipt." The Waiting Fan escalated it: this should be a **Backrooms vertical slice**, not a generic obstacle course. This PR delivers the Backrooms-themed version.
 
-The claim / run-again UI binding was already complete on main (the panel's `primary.Activated` handler fires `ClaimRewardRequested:FireServer(...)` and `RunAgainRequested:FireServer(...)` based on `currentMode`). The missing piece was the world-side triggers. `SignalRunCourse.server.luau` (above) closes that gap.
+The claim / run-again UI binding was already complete on main (the panel's `primary.Activated` handler fires `ClaimRewardRequested:FireServer(...)` and `RunAgainRequested:FireServer(...)` based on `currentMode`). The world-side triggers were the missing piece. `SignalRunCourse.server.luau` builds the enclosed liminal corridor and wires the triggers.
 
 Player flow:
 
-1. Spawn at the blue SpawnLocation.
-2. Walk forward onto the green StartPad → `RoundCompletionRewards.startRound(player)` → `round_started` emits.
-3. Walk to the red FinishPad → `RoundCompletionRewards.completeRound(player)` → `round_completed` + `reward_granted` emit, server `fireState` sends `RoundRewardStateChanged` to the client, reward panel becomes visible.
+1. Spawn inside the corridor at the back-wall SpawnLocation (`EnterRoom`).
+2. Walk forward across the green `EnterTrigger` floor plate → `RoundCompletionRewards.startRound(player)` → `round_started` emits.
+3. Walk down the corridor and step onto the red `ExitTrigger` plate → `RoundCompletionRewards.completeRound(player)` → `round_completed` + `reward_granted` emit, server `fireState` sends `RoundRewardStateChanged` to the client, reward panel becomes visible.
 4. Click Claim → `reward_claimed` emits, panel switches to Run Again mode.
 5. Click Run Again → `requestRunAgain` → `next_round_started` emits, panel hides.
-6. Player walks back to FinishPad (StartPad's debounce blocks a second `round_started`) and loops.
+6. Player walks back through the corridor onto the ExitTrigger again to loop. (EnterTrigger's debounce prevents a second `round_started`; the next round is the one created server-side by `requestRunAgain`.)
+
+## Vision-lock context
+
+The operator just declared: Polaxory's real product is an inference-powered Roblox game factory, with Backrooms-style Roblox playable as the first commercial vertical and subscription / token-staking discounts as the gate. This PR ships the **hand-built** Backrooms Slice 0 corridor. The inference-driven generation pipeline (prompt → graph → contracts → modules → Rojo → playable Studio receipt) that would PRODUCE this corridor from a prompt is the next product block, not this commit's scope. What this commit proves: the receipt loop and the Backrooms aesthetic both work end-to-end on a real player. What it does not prove: that Polaxory can generate such a corridor from a prompt instead of a hand-edit.
 
 ## What didn't ship in this PR
 
