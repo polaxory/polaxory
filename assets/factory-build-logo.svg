@@ -1,0 +1,17 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1200" rx="180" fill="#0B0F14"/>
+  <g filter="url(#softGlow)">
+    <path d="M275 760V425L600 260L925 425V760L600 940L275 760Z" stroke="#EAF2FF" stroke-width="44" stroke-linejoin="round"/>
+    <path d="M600 260V940" stroke="#EAF2FF" stroke-width="36" stroke-linecap="round"/>
+    <path d="M275 425L600 600L925 425" stroke="#EAF2FF" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <path d="M430 747V523H582C636 523 677 535 706 559C735 583 749 617 749 662C749 707 734 741 703 764C672 787 628 799 571 799H430V747Z" fill="#0B0F14"/>
+  <path d="M475 754V568H584C619 568 646 576 665 591C684 606 694 629 694 660C694 690 684 713 664 729C644 746 616 754 580 754H475ZM533 706H580C598 706 612 702 621 694C631 687 636 675 636 661C636 646 631 635 621 627C611 620 597 616 580 616H533V706Z" fill="#EAF2FF"/>
+  <path d="M426 838H774" stroke="#7CFFB2" stroke-width="32" stroke-linecap="round"/>
+  <path d="M426 360H774" stroke="#7CFFB2" stroke-width="32" stroke-linecap="round"/>
+  <defs>
+    <filter id="softGlow" x="205" y="190" width="790" height="820" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+  </defs>
+</svg>

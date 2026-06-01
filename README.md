@@ -1,54 +1,41 @@
-# Polaxory / Roblox Studio Formation
+# Polaxory
 
-Working directory for Polaxory: a Roblox-native game factory and rails system.
+Polaxory is a Roblox games-on-rails production layer: creator intent -> slice spec -> system graph -> contracts -> modules -> validators -> Studio-ready build.
 
-## Load order
-
-1. `00_ACTIVE_CONTEXT.md`
-2. `00_FILE_KNOLL.md`
-3. Specific canonical/source files only when needed.
-
-Do **not** load the whole directory into a context window. Most files are research/source material, not active state.
+This repository is the clean public/private build layer exported from the Hypurrclaw workspace. It intentionally excludes private agent state, uploaded book files, credentials, secrets, and raw attachment blobs.
 
 ## Current product thesis
 
-**Polaxory turns Roblox ideas into validated, interconnected game systems — not random scripts.**
+**Give Polaxory one game idea. It returns a secure, editable Roblox production build.**
 
-First proof:
+First proof: a Backrooms-inspired Roblox vertical slice proving deterministic module graph, server-authoritative mechanics, resource/facility/entity/event contracts, validator reports, and Rojo-compatible output.
 
-> **Give Polaxory one game idea. It returns a secure, editable Roblox production build.**
+## Load order
 
-## Canonical active files
+1. `FILE_KNOLL.md`
+2. `SECURITY_BOUNDARY.md`
+3. `docs/polaxory/00_ACTIVE_CONTEXT.md`
+4. Canonical Polaxory docs under `docs/polaxory/`
 
-- `POLAXORY_RAILS_SPEC_v0.md`
-- `POLAXORY_SYSTEM_GRAPH_SCHEMA_v0.md`
-- `POLAXORY_VALIDATOR_CONTRACTS_v0.md`
+Do not load the entire research pile by default. Use the knoll.
 
-## Current build direction
+## Canonical active docs
 
-Build one Backrooms-inspired Roblox vertical slice that proves:
+- `docs/polaxory/POLAXORY_RAILS_CONSTITUTION_v0.md`
+- `docs/polaxory/POLAXORY_RAILS_SPEC_v0.md`
+- `docs/polaxory/POLAXORY_SYSTEM_GRAPH_SCHEMA_v1.md`
+- `docs/polaxory/POLAXORY_VALIDATOR_CONTRACTS_v0.md`
 
-- deterministic module graph
-- server-authoritative mechanics
-- resource/facility/entity/event contracts
-- validation reports
-- Rojo-compatible project output
-- Open Cloud engine validation path
+## Current next action
 
-## Next files to create
+Build the next concrete artifacts:
 
-- `POLAXORY_BACKROOMS_SLICE_0_GDD.md`
-- `POLAXORY_BACKROOMS_SLICE_0_GRAPH.json`
-- `polaxory-rails/` repo skeleton
-- minimal validator implementation plan
+1. `POLAXORY_BACKROOMS_SLICE_0_GDD.md`
+2. `POLAXORY_BACKROOMS_SLICE_0_GRAPH.json`
+3. `polaxory-rails/` repo skeleton
+4. minimal validator implementation plan
+5. first Rojo/TestEZ/Open Cloud CI plan
 
-## Active source/reference files
+## Cut line
 
-- `POLAXORY_PRACTICAL_BUILD_RESEARCH_v0.md`
-- `polaxory-mvp-architecture.md`
-- `polaxory-research-brief.md`
-- `polaxory-research-continuation-3-2026-06-01.md`
-
-## Rule
-
-Stop expanding pitch. Build rails, graph, validators, slice, repo skeleton.
+No more pitch sprawl. Build rails, graph, validators, slice, repo skeleton.
