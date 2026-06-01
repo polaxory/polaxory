@@ -20,6 +20,10 @@
     {
       "name": "Investors",
       "value": "A wedge into Roblox studios: one successful game loop demonstrates a repeatable AI operating layer for creative production."
+    },
+    {
+      "name": "Token infrastructure observers",
+      "value": "A quiet view into how Polaxory turns research, guardrails, and shipped artifacts into a more credible token infrastructure layer."
     }
   ],
   "nextProfitableShip": {
@@ -56,6 +60,11 @@
       "state": "quiet_running"
     },
     {
+      "lane": "token_infrastructure",
+      "label": "Phoenix/Rise and adjacent Solana infra patterns converted into guarded Polaxory artifacts",
+      "state": "researching"
+    },
+    {
       "lane": "competitor",
       "label": "Adjacent Roblox games and update cadence",
       "state": "needs_targets"
@@ -75,6 +84,11 @@
     {
       "name": "Tooling Layer",
       "purpose": "Keeps builder, validator, researcher, and release-review loops quiet unless they ship or block.",
+      "status": "active"
+    },
+    {
+      "name": "Phoenix Token Infra Research",
+      "purpose": "Research PhoenixTrade/Rise and adjacent Solana infrastructure patterns, then commit one guarded Polaxory adaptation when useful.",
       "status": "active"
     },
     {
