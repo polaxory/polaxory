@@ -39,7 +39,7 @@ Acceptance check: each transition in the proof loop should be traceable to one s
 When improving the repo, keep each commit to one narrow artifact or clarification so the rails stay auditable.
 
 ## Local guardrails
-Before committing code changes to the playable loop, run the same checks CI uses:
+Before committing code changes to the playable loop, run the same checks CI uses from the repository root:
 
 ```bash
 stylua --check src
