@@ -50,7 +50,7 @@ primary.Parent = frame
 local currentSessionKey: string? = nil
 local currentMode: "claim" | "run_again" | nil = nil
 
-local function renderRewardGranted(payload: {[string]: any})
+local function renderRewardGranted(payload: { [string]: any })
 	local reward = payload.reward
 	currentSessionKey = payload.sessionKey
 	currentMode = "claim"
@@ -62,10 +62,17 @@ local function renderRewardGranted(payload: {[string]: any})
 	)
 	primary.Text = reward.primaryCta or RewardLoopConfig.RoundCompletionReward.primaryCta
 	gui.Enabled = true
-	print(string.format("[Polaxory] %s: %s +%d", RewardLoopConfig.Events.RewardShown, reward.currency, reward.amount))
+	print(
+		string.format(
+			"[Polaxory] %s: %s +%d",
+			RewardLoopConfig.Events.RewardShown,
+			reward.currency,
+			reward.amount
+		)
+	)
 end
 
-local function renderRewardClaimed(payload: {[string]: any})
+local function renderRewardClaimed(payload: { [string]: any })
 	currentSessionKey = payload.sessionKey
 	currentMode = "run_again"
 	message.Text = "Reward claimed. Ready for the next run?"
@@ -73,7 +80,7 @@ local function renderRewardClaimed(payload: {[string]: any})
 	gui.Enabled = true
 end
 
-local function renderRejected(payload: {[string]: any})
+local function renderRejected(payload: { [string]: any })
 	message.Text = string.format("Request rejected: %s", tostring(payload.reason))
 	primary.Text = "Close"
 	currentMode = nil
@@ -94,7 +101,7 @@ primary.Activated:Connect(function()
 	end
 end)
 
-stateChanged.OnClientEvent:Connect(function(payload: {[string]: any})
+stateChanged.OnClientEvent:Connect(function(payload: { [string]: any })
 	if payload.event == RewardLoopConfig.Events.RewardGranted then
 		renderRewardGranted(payload)
 	elseif payload.event == RewardLoopConfig.Events.RewardClaimed then
@@ -103,8 +110,17 @@ stateChanged.OnClientEvent:Connect(function(payload: {[string]: any})
 		gui.Enabled = false
 		currentMode = nil
 		currentSessionKey = payload.sessionKey
-		print(string.format("[Polaxory] %s: %s", RewardLoopConfig.Events.NextRoundStarted, payload.sessionKey))
-	elseif payload.event == RewardLoopConfig.Events.RejectedClaim or payload.event == RewardLoopConfig.Events.RejectedRunAgain then
+		print(
+			string.format(
+				"[Polaxory] %s: %s",
+				RewardLoopConfig.Events.NextRoundStarted,
+				payload.sessionKey
+			)
+		)
+	elseif
+		payload.event == RewardLoopConfig.Events.RejectedClaim
+		or payload.event == RewardLoopConfig.Events.RejectedRunAgain
+	then
 		renderRejected(payload)
 	end
 end)

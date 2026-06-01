@@ -29,7 +29,7 @@ local TELEMETRY_FOLDER_NAME = "PolaxoryTelemetryEvents"
 local REMOTE_FOLDER_NAME = "PolaxoryRemotes"
 
 local RoundCompletionRewards = {}
-local stateByPlayerKey: {[string]: RoundState} = {}
+local stateByPlayerKey: { [string]: RoundState } = {}
 local handlersInstalled = false
 
 local function now(): number
@@ -72,7 +72,7 @@ local function getTelemetryEvent(name: string): BindableEvent?
 	return nil
 end
 
-local function emitTelemetry(name: string, payload: {[string]: any})
+local function emitTelemetry(name: string, payload: { [string]: any })
 	local event = getTelemetryEvent(name)
 	if event ~= nil then
 		event:Fire(payload)
@@ -104,7 +104,7 @@ local function getOrCreateRemote(name: string): RemoteEvent
 	return remote
 end
 
-local function fireState(player: Player, payload: {[string]: any})
+local function fireState(player: Player, payload: { [string]: any })
 	local remote = getOrCreateRemote("RoundRewardStateChanged")
 	remote:FireClient(player, payload)
 end
@@ -134,11 +134,17 @@ function RoundCompletionRewards.startRound(player: Player, sessionKey: string?):
 	return state
 end
 
-function RoundCompletionRewards.completeRound(player: Player, payload: {[string]: any}?): {[string]: any}
+function RoundCompletionRewards.completeRound(
+	player: Player,
+	payload: { [string]: any }?
+): { [string]: any }
 	local key = playerKey(player)
 	local state = stateByPlayerKey[key]
 	if state == nil then
-		state = RoundCompletionRewards.startRound(player, if payload ~= nil then payload.sessionKey else nil)
+		state = RoundCompletionRewards.startRound(
+			player,
+			if payload ~= nil then payload.sessionKey else nil
+		)
 	end
 
 	if state.pendingReward ~= nil or state.grantedAt ~= nil then
@@ -153,9 +159,18 @@ function RoundCompletionRewards.completeRound(player: Player, payload: {[string]
 
 	emitTelemetry("RoundCompleted", {
 		sessionKey = state.sessionKey,
-		durationSeconds = if payload ~= nil and typeof(payload.durationSeconds) == "number" then payload.durationSeconds else 0,
-		resourcesDelivered = if payload ~= nil and typeof(payload.resourcesDelivered) == "number" then payload.resourcesDelivered else 0,
-		workersAssigned = if payload ~= nil and typeof(payload.workersAssigned) == "number" then payload.workersAssigned else 0,
+		durationSeconds = if payload ~= nil
+				and typeof(payload.durationSeconds) == "number"
+			then payload.durationSeconds
+			else 0,
+		resourcesDelivered = if payload ~= nil
+				and typeof(payload.resourcesDelivered) == "number"
+			then payload.resourcesDelivered
+			else 0,
+		workersAssigned = if payload ~= nil
+				and typeof(payload.workersAssigned) == "number"
+			then payload.workersAssigned
+			else 0,
 	})
 	emitTelemetry("RewardGranted", {
 		sessionKey = state.sessionKey,
@@ -169,14 +184,30 @@ function RoundCompletionRewards.completeRound(player: Player, payload: {[string]
 		reward = reward,
 	}
 	fireState(player, response)
-	print(string.format("[Polaxory] %s: %s +%d for %s", RewardLoopConfig.Events.RewardGranted, reward.currency, reward.amount, player.Name))
+	print(
+		string.format(
+			"[Polaxory] %s: %s +%d for %s",
+			RewardLoopConfig.Events.RewardGranted,
+			reward.currency,
+			reward.amount,
+			player.Name
+		)
+	)
 	return response
 end
 
-function RoundCompletionRewards.claimPendingReward(player: Player, payload: {[string]: any}?): {[string]: any}
+function RoundCompletionRewards.claimPendingReward(
+	player: Player,
+	_payload: { [string]: any }?
+): { [string]: any }
 	local state = stateByPlayerKey[playerKey(player)]
 	if state == nil or state.grantedAt == nil then
-		return reject(player, state, RewardLoopConfig.Events.RejectedClaim, "claim_before_completion")
+		return reject(
+			player,
+			state,
+			RewardLoopConfig.Events.RejectedClaim,
+			"claim_before_completion"
+		)
 	end
 
 	if state.claimedAt ~= nil or state.pendingReward == nil then
@@ -199,17 +230,35 @@ function RoundCompletionRewards.claimPendingReward(player: Player, payload: {[st
 		reward = reward,
 	}
 	fireState(player, response)
-	print(string.format("[Polaxory] %s: %s for %s", RewardLoopConfig.Events.RewardClaimed, state.sessionKey, player.Name))
+	print(
+		string.format(
+			"[Polaxory] %s: %s for %s",
+			RewardLoopConfig.Events.RewardClaimed,
+			state.sessionKey,
+			player.Name
+		)
+	)
 	return response
 end
 
-function RoundCompletionRewards.requestRunAgain(player: Player, payload: {[string]: any}?): {[string]: any}
+function RoundCompletionRewards.requestRunAgain(
+	player: Player,
+	payload: { [string]: any }?
+): { [string]: any }
 	local previousState = stateByPlayerKey[playerKey(player)]
 	if previousState == nil or previousState.claimedAt == nil then
-		return reject(player, previousState, RewardLoopConfig.Events.RejectedRunAgain, "run_again_before_claim")
+		return reject(
+			player,
+			previousState,
+			RewardLoopConfig.Events.RejectedRunAgain,
+			"run_again_before_claim"
+		)
 	end
 
-	local nextState = RoundCompletionRewards.startRound(player, if payload ~= nil then payload.sessionKey else nil)
+	local nextState = RoundCompletionRewards.startRound(
+		player,
+		if payload ~= nil then payload.sessionKey else nil
+	)
 	emitTelemetry("NextRoundStarted", {
 		sessionKey = nextState.sessionKey,
 		secondsAfterClaim = nextState.startedAt - (previousState.claimedAt or nextState.startedAt),
@@ -220,7 +269,14 @@ function RoundCompletionRewards.requestRunAgain(player: Player, payload: {[strin
 		sessionKey = nextState.sessionKey,
 	}
 	fireState(player, response)
-	print(string.format("[Polaxory] %s: %s for %s", RewardLoopConfig.Events.NextRoundStarted, nextState.sessionKey, player.Name))
+	print(
+		string.format(
+			"[Polaxory] %s: %s for %s",
+			RewardLoopConfig.Events.NextRoundStarted,
+			nextState.sessionKey,
+			player.Name
+		)
+	)
 	return response
 end
 
@@ -237,15 +293,23 @@ function RoundCompletionRewards.installRemoteHandlers()
 
 	getOrCreateRemote("RoundRewardStateChanged")
 
-	getOrCreateRemote("ClaimRewardRequested").OnServerEvent:Connect(function(player: Player, payload: {[string]: any}?)
-		RoundCompletionRewards.claimPendingReward(player, payload)
-	end)
+	getOrCreateRemote("ClaimRewardRequested").OnServerEvent:Connect(
+		function(player: Player, payload: { [string]: any }?)
+			RoundCompletionRewards.claimPendingReward(player, payload)
+		end
+	)
 
-	getOrCreateRemote("RunAgainRequested").OnServerEvent:Connect(function(player: Player, payload: {[string]: any}?)
-		RoundCompletionRewards.requestRunAgain(player, payload)
-	end)
+	getOrCreateRemote("RunAgainRequested").OnServerEvent:Connect(
+		function(player: Player, payload: { [string]: any }?)
+			RoundCompletionRewards.requestRunAgain(player, payload)
+		end
+	)
 
-	print("[Polaxory] reward claim/replay remotes ready", RemoteContracts.get("ClaimRewardRequested") ~= nil, RemoteContracts.get("RunAgainRequested") ~= nil)
+	print(
+		"[Polaxory] reward claim/replay remotes ready",
+		RemoteContracts.get("ClaimRewardRequested") ~= nil,
+		RemoteContracts.get("RunAgainRequested") ~= nil
+	)
 end
 
 function RoundCompletionRewards._debugReset(player: Player)
