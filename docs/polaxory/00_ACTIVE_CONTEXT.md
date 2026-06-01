@@ -58,7 +58,7 @@ creator prompt
 ## Canonical artifacts created
 
 1. `POLAXORY_RAILS_SPEC_v0.md` — rails constitution: product boundary, required stack, module/remote/resource/event/skill contracts, validation tiers, Slice 0 minimum.
-2. `POLAXORY_SYSTEM_GRAPH_SCHEMA_v0.md` — graph schema: node/edge types, Backrooms Slice 0 draft graph, scenario shape, validation rules, report shape.
+2. `POLAXORY_SYSTEM_GRAPH_SCHEMA_v1.md` — graph schema: node/edge types, Backrooms Slice 0 draft graph, scenario shape, validation rules, report shape.
 3. `POLAXORY_VALIDATOR_CONTRACTS_v0.md` — validator suite.
 
 ## Canonical next artifacts
