@@ -1,0 +1,48 @@
+{
+  "id": "roblox_real_data_loop_v1",
+  "title": "Wire first playable round telemetry into Roblox gameplay",
+  "status": "ready_for_implementation",
+  "priority": "P0",
+  "mission": "Replace assumption-led product decisions with first-party aggregate Roblox playtest data.",
+  "where_we_left_off": {
+    "thesis": "Polaxory is a Roblox-first creative company with an AI operating layer.",
+    "product_surface": "/projects/polaxory command room exists as a direction-setting surface.",
+    "playable_loop": "Round completion reward seam exists.",
+    "data_loop": "Telemetry contract existed; this task wires runtime events into gameplay."
+  },
+  "events_to_wire": [
+    {
+      "event": "RoundStarted",
+      "source": "round controller when a player/team begins a playable factory round",
+      "minimum_payload": ["sessionKey", "partySize"]
+    },
+    {
+      "event": "RoundCompleted",
+      "source": "round controller when win/completion condition resolves",
+      "minimum_payload": ["sessionKey", "durationSeconds", "resourcesDelivered", "workersAssigned"]
+    },
+    {
+      "event": "RewardGranted",
+      "source": "RoundCompletionRewards after grant calculation",
+      "minimum_payload": ["sessionKey", "softCurrency", "xp"]
+    },
+    {
+      "event": "RewardClaimed",
+      "source": "reward panel claim interaction",
+      "minimum_payload": ["sessionKey", "secondsAfterGrant"]
+    },
+    {
+      "event": "NextRoundStarted",
+      "source": "replay/requeue button or automatic next-round transition",
+      "minimum_payload": ["sessionKey", "secondsAfterClaim"]
+    }
+  ],
+  "acceptance_criteria": [
+    "A local Roblox Studio playtest can fire all five telemetry events.",
+    "SnapshotRequested prints an aggregate snapshot.",
+    "No raw Roblox user IDs, usernames, or chat text are emitted.",
+    "At least one aggregate snapshot is copied into data/polaxory/playtests/ with source=first_party_playtest.",
+    "/projects/polaxory replaces assumption labels with real snapshot values where available."
+  ],
+  "next_commit_after_this": "Wire RoundCompletionRewards and reward panel seams to PolaxoryTelemetryEvents."
+}

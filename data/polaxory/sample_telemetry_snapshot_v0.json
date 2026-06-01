@@ -1,0 +1,45 @@
+{
+  "generatedAtUnix": 1780336200,
+  "buildLabel": "polaxory-telemetry-loop-v0",
+  "source": "sample_shape_not_live_data",
+  "events": {
+    "round_started": {
+      "count": 12,
+      "uniqueSessions": 7,
+      "metrics": {
+        "partySize": { "count": 12, "total": 16, "min": 1, "max": 3, "average": 1.3333 }
+      }
+    },
+    "round_completed": {
+      "count": 8,
+      "uniqueSessions": 6,
+      "metrics": {
+        "durationSeconds": { "count": 8, "total": 1520, "min": 122, "max": 260, "average": 190 },
+        "resourcesDelivered": { "count": 8, "total": 94, "min": 7, "max": 18, "average": 11.75 },
+        "workersAssigned": { "count": 8, "total": 24, "min": 2, "max": 4, "average": 3 }
+      }
+    },
+    "reward_granted": {
+      "count": 8,
+      "uniqueSessions": 6,
+      "metrics": {
+        "softCurrency": { "count": 8, "total": 640, "min": 60, "max": 100, "average": 80 },
+        "xp": { "count": 8, "total": 320, "min": 30, "max": 50, "average": 40 }
+      }
+    },
+    "reward_claimed": {
+      "count": 6,
+      "uniqueSessions": 5,
+      "metrics": {
+        "secondsAfterGrant": { "count": 6, "total": 33, "min": 2, "max": 9, "average": 5.5 }
+      }
+    },
+    "next_round_started": {
+      "count": 4,
+      "uniqueSessions": 4,
+      "metrics": {
+        "secondsAfterClaim": { "count": 4, "total": 76, "min": 9, "max": 31, "average": 19 }
+      }
+    }
+  }
+}
