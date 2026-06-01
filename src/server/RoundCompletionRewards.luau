@@ -3,8 +3,10 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ServerScriptService = game:GetService("ServerScriptService")
 
-local RewardLoopConfig = require(ReplicatedStorage:WaitForChild("RewardLoopConfig"))
-local RemoteContracts = require(ReplicatedStorage:WaitForChild("RemoteContracts"))
+-- src/shared/* syncs to ReplicatedStorage.Shared.* per default.project.json.
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local RewardLoopConfig = require(Shared:WaitForChild("RewardLoopConfig"))
+local RemoteContracts = require(Shared:WaitForChild("RemoteContracts"))
 
 export type CompletionReward = {
 	id: string,
