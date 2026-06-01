@@ -8,25 +8,31 @@
 
 ## What this commit adds
 
-Six new top-level structures alongside the canonical layer. None override anything in `docs/polaxory/`; they sit parallel and reference it.
+Six new structures alongside the canonical layer + Blake's Factory Slice 0 work. None override anything in `docs/polaxory/`; they sit parallel and reference it. The rails explainer docs were moved from a planned `polaxory-rails/` subdirectory into `docs/rails/` after rebasing, because Blake's `d89a650` commit placed the skeleton at the repo root (where it belongs) — my subdirectory was structurally redundant.
 
 ```
-polaxory/                                  (canonical structure unchanged)
-├── README.md                              (unchanged)
+polaxory/
+├── README.md                              (unchanged — Blake's)
 ├── FILE_KNOLL.md                          (unchanged — Blake's source of truth)
 ├── SECURITY_BOUNDARY.md                   (unchanged — respected by this commit)
+├── KNOLL_2026-06-01_AGENT_ADDITIONS.md    ← this file (companion knoll)
 ├── assets/                                (unchanged)
+├── aftman.toml / default.project.json     (Blake's d89a650 — Rojo + Rokit at root)
+├── selene.toml / stylua.toml / wally.toml (Blake's d89a650 — tooling configs at root)
+├── src/                                   (Blake's d89a650 — Factory Slice 0 Luau)
+├── tests/                                 (Blake's d89a650 — test scaffolding)
+├── .github/                               (Blake's 961bd5f — CI guardrails)
 ├── docs/
-│   ├── polaxory/                          (unchanged — canonical, untouched)
+│   ├── polaxory/                          (canonical, untouched + Blake's FACTORY_SLICE_0_CODEMAP)
 │   ├── character/                         ← NEW (this commit)
-│   └── research/                          ← NEW (this commit)
+│   ├── research/                          ← NEW (this commit)
+│   └── rails/                             ← NEW (this commit; moved from a planned polaxory-rails/)
 ├── voice/                                 ← NEW (this commit)
 ├── wave-attempts/                         ← NEW (this commit)
 ├── prompts/                               ← NEW (this commit)
-├── apps/                                  ← NEW (this commit)
-│   ├── writing-agent/                     (was agent/ — renamed to respect SECURITY_BOUNDARY)
-│   └── roblox-ops/
-└── polaxory-rails/                        ← NEW (this commit; at top level per README next-actions)
+└── apps/                                  ← NEW (this commit)
+    ├── writing-agent/                     (was agent/ — renamed to respect SECURITY_BOUNDARY)
+    └── roblox-ops/
 ```
 
 ---
@@ -109,14 +115,18 @@ Standalone tooling for the RobloxOps surface. Two tools so far.
 
 ---
 
-## polaxory-rails/ — the engine skeleton (v0, alignment pending)
+## docs/rails/ — rail explainer documentation
 
-Top-level per README's next-actions list. **WARNING: this skeleton was scaffolded before I read the canonical constitution.** It's structurally close but misaligned in specifics. Task #28 captures the alignment work needed:
+Conceptual documentation for each of the seven rails, plus the prime law, the seven-rails overview, and the weave between rails. **Originally drafted as a parallel `polaxory-rails/` repo skeleton; the configs and src/ stubs were dropped during rebase because Blake's `d89a650` placed the canonical skeleton at the repo root.** Only the explainer docs survived as documentation under `docs/rails/`.
 
-- **Aligned:** prime law verbatim, seven rails names + order, base tooling stack, module-contract concept
-- **Misaligned:** folder structure (canonical uses src/ReplicatedStorage/PX/Shared, src/ServerScriptService/PXServer/Services, etc.), PX* service naming, agent gateway schema, 12 specific validator names, contract types, graph envelope shape, Slice 0 nodes
+- `docs/rails/PRIME_LAW.md` — three clauses of "the server is the game, the graph is the source of truth, scripts are artifacts"
+- `docs/rails/SEVEN_RAILS.md` — the seven rails (intent, graph, contract, authority, validation, build, agent) explained in depth, with the canonical order
+- `docs/rails/WEAVE.md` — the data-flow contract between rails (creator intent → graph → contracts → services → validators → Rojo build → Studio-ready slice)
+- `docs/rails/{intent,graph,contract,authority,validation,build,agent}/README.md` — per-rail explainers (what it consumes, what it produces, validation rules surfaced, open questions)
 
-The skeleton ships as v0 with operator-carve-required markers throughout. Recommended next step per Task #28: draft Slice 0 GDD + Slice 0 graph JSON first, then rebuild polaxory-rails/ aligned to the canonical graph + constitution.
+These docs are **operator-carve-pending**. They were drafted from Blake's summary before the canonical `POLAXORY_RAILS_CONSTITUTION_v0.md` was readable. Specific divergences from canonical (PX* service naming, agent gateway schema `{actorId, skillId, targetId, inputs, reasoningRef}`, the 12 specific validators, the four runtime owner categories, etc.) need to be reconciled in a follow-up carve. Task #28 tracks.
+
+The polaxory-rails/ subdirectory that was planned earlier is now gone — the repo root IS the polaxory-rails skeleton, per Blake's structural decision.
 
 ---
 
