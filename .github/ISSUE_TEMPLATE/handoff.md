@@ -4,7 +4,6 @@ about: Standard multi-agent task handoff per docs/agentic/MULTI_AGENT_COORDINATI
 title: "[handoff] "
 labels: agent-handoff
 assignees: ''
-
 ---
 
 ## Task
@@ -22,13 +21,15 @@ assignees: ''
 ## Files to inspect
 
 ```text
-
+# e.g. docs/polaxory/00_ACTIVE_CONTEXT.md
+# e.g. src/server/RoundTelemetryLoop.server.luau
 ```
 
 ## Files likely to modify
 
 ```text
-
+# e.g. src/shared/RoundContracts.luau
+# e.g. docs/polaxory/POLAXORY_RAILS_SPEC_v0.md
 ```
 
 ## Acceptance criteria
@@ -47,4 +48,4 @@ assignees: ''
 
 ## Next handoff
 
-<!-- The next ticket this unblocks, or "n/a — terminal". -->
+<!-- The next ticket this unblocks, or “n/a — terminal”. -->
