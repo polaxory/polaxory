@@ -38,6 +38,7 @@ Current implementation target:
 1. Wire the existing `src/shared`, `src/server`, and `src/client` skeleton around the proof loop instead of adding parallel Signal Run scaffolding.
 2. Keep telemetry aggregate-first in `TelemetryBuffer.luau` and `RoundTelemetryLoop.server.luau`.
 3. Keep reward proof isolated from raw player IDs via `RoundCompletionRewards.luau` and `RoundCompletionRewardPanel.client.luau`.
+4. Keep replay requests server-owned: the client sends intent only; idempotency and cooldown checks must happen before starting the next round.
 
 Acceptance check: each transition in the proof loop should be traceable to one server-owned state change and one player-visible feedback point before new rails or lore are added.
 
@@ -57,7 +58,7 @@ selene src
 rojo build default.project.json --output build.rbxlx
 ```
 
-These checks keep local edits aligned with the repo's format, lint, and Studio-build expectations.
+These checks keep local edits aligned with the repo’s format, lint, and Studio-build expectations.
 
 ## Cut line
 
