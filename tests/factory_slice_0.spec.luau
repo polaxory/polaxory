@@ -9,6 +9,7 @@ type Reward = {
 }
 
 type State = {
+	roundId: number,
 	started: boolean,
 	completed: boolean,
 	granted: boolean,
@@ -24,6 +25,7 @@ end
 
 local function newHarness()
 	local state: State = {
+		roundId = 0,
 		started = false,
 		completed = false,
 		granted = false,
@@ -37,14 +39,25 @@ local function newHarness()
 		return eventName
 	end
 
+	local function resetForFreshRound()
+		state.roundId += 1
+		state.started = true
+		state.completed = false
+		state.granted = false
+		state.claimed = false
+		state.reward = nil
+	end
+
 	return {
 		receipt = receipt,
+		currentRoundId = function()
+			return state.roundId
+		end,
+		hasPendingReward = function()
+			return state.reward ~= nil
+		end,
 		startRound = function()
-			state.started = true
-			state.completed = false
-			state.granted = false
-			state.claimed = false
-			state.reward = nil
+			resetForFreshRound()
 			return emit("round_started")
 		end,
 		finishRound = function()
@@ -75,18 +88,21 @@ local function newHarness()
 			if not state.claimed then
 				return emit("rejected_run_again:run_again_before_claim")
 			end
+			resetForFreshRound()
 			return emit("next_round_started")
 		end,
 	}
-
 end
 
 local function runValidLoop()
 	local h = newHarness()
 	h.startRound()
+	assertEqual(h.currentRoundId(), 1, "initial round id")
 	h.finishRound()
 	h.claimReward()
 	h.runAgain()
+	assertEqual(h.currentRoundId(), 2, "run again starts fresh round")
+	assertEqual(h.hasPendingReward(), false, "fresh round has no pending reward")
 	assertEqual(table.concat(h.receipt, " -> "), "round_started -> round_completed -> reward_granted -> reward_claimed -> next_round_started", "valid loop receipt")
 	return "PASS valid loop"
 end
