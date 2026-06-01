@@ -1,6 +1,6 @@
 # Security Boundary
 
-This repo commit is intentionally conservative. The goal is a clean working layer with no security breach risk.
+This repository snapshot is intentionally conservative. The goal is a clean working layer with no security breach risk.
 
 ## Excluded private runtime state
 
