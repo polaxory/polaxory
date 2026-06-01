@@ -5,7 +5,9 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local RewardLoopConfig = require(ReplicatedStorage:WaitForChild("RewardLoopConfig"))
+-- src/shared/* syncs to ReplicatedStorage.Shared.* per default.project.json.
+local Shared = ReplicatedStorage:WaitForChild("Shared")
+local RewardLoopConfig = require(Shared:WaitForChild("RewardLoopConfig"))
 
 local localPlayer = Players.LocalPlayer
 local playerGui = localPlayer:WaitForChild("PlayerGui")
