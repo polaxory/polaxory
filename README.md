@@ -28,10 +28,10 @@ Build **Signal Run v0** before adding more rails or lore. The next shippable art
 round_started -> round_completed -> reward_granted -> reward_claimed -> next_round_started
 ```
 
-First implementation target:
-1. Create the Signal Run file skeleton under `src/shared`, `src/server`, and `src/client`.
-2. Implement aggregate-first `TelemetrySink.server.luau`.
-3. Add `SignalRunTestHarness.server.luau` that prints the ordered proof loop once without raw player IDs.
+Current implementation target:
+1. Wire the existing `src/shared`, `src/server`, and `src/client` skeleton around the proof loop instead of adding parallel Signal Run scaffolding.
+2. Keep telemetry aggregate-first in `TelemetryBuffer.luau` and `RoundTelemetryLoop.server.luau`.
+3. Keep reward proof isolated from raw player IDs via `RoundCompletionRewards.luau` and `RoundCompletionRewardPanel.client.luau`.
 
 ## Small-change rule
 When improving the repo, keep each commit to one narrow artifact or clarification so the rails stay auditable.
