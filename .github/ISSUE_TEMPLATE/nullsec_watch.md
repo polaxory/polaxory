@@ -26,7 +26,8 @@ assignees: ''
 ## Files relevant
 
 ```text
-
+# e.g. src/server/RoundTelemetryLoop.server.luau
+# e.g. .github/workflows/ci.yml
 ```
 
 ## Acceptance
