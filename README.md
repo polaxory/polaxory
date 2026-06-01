@@ -29,5 +29,8 @@ Build the next concrete artifacts in this order:
 4. `docs/polaxory/POLAXORY_VALIDATOR_IMPLEMENTATION_PLAN_v0.md` — minimal validator implementation plan.
 5. `.github/workflows/ci.yml` — first Rojo/TestEZ/Open Cloud CI plan.
 
+## Small-change rule
+When improving the repo, keep each commit to one narrow artifact or clarification so the rails stay auditable.
+
 ## Cut line
 No more pitch sprawl. Build rails, graph, validators, slice, repo skeleton.
