@@ -51,6 +51,11 @@
       "state": "watching"
     },
     {
+      "lane": "tooling",
+      "label": "Builder, validator, researcher, and release-review loops",
+      "state": "quiet_running"
+    },
+    {
       "lane": "competitor",
       "label": "Adjacent Roblox games and update cadence",
       "state": "needs_targets"
@@ -65,6 +70,11 @@
     {
       "name": "Safe Auto Commit",
       "purpose": "Turn approved product intent into repo artifacts.",
+      "status": "active"
+    },
+    {
+      "name": "Tooling Layer",
+      "purpose": "Keeps builder, validator, researcher, and release-review loops quiet unless they ship or block.",
       "status": "active"
     },
     {
