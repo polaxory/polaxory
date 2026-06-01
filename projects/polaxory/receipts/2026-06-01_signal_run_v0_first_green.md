@@ -22,6 +22,7 @@ Both landings shipped with `stylua --check src` failing on main, blocking every 
 |---|---|
 | `src/server/RoundCompletionRewards.luau` | Reformatted with stylua 0.20.0 to match `aftman.toml`'s pinned CI version. Renamed the unused `payload` parameter on `claimPendingReward` to `_payload` so selene's `unused_variable` warning clears. No logic changes. |
 | `src/client/RoundCompletionRewardPanel.client.luau` | Reformatted with stylua 0.20.0. No logic changes. |
+| `src/server/SignalRunCourse.server.luau` *(new)* | Minimum graybox course so a fresh player can drive the receipt without the test harness. Builds a Platform + SpawnLocation + StartPad + FinishPad under `Workspace.PolaxorySignalRunCourse`. Wires `StartPad.Touched` → `RoundCompletionRewards.startRound(player)` and `FinishPad.Touched` → `RoundCompletionRewards.completeRound(player)`, each with a 2-second per-player debounce so a single physical touch produces a single call. Adds BillboardGui labels (START / FINISH) so a player can orient without reading docs. |
 | `projects/polaxory/receipts/2026-06-01_signal_run_v0_first_green.md` *(new)* | This file. |
 
 ## Acceptance mapping
@@ -68,22 +69,37 @@ The spec is intentionally a tiny self-contained harness — it does not require 
 
 Local verification used the exact stylua 0.20.0 binary pinned in `aftman.toml`, and selene 0.31.0 (newer than CI's 0.27.1 but compatible for these lints).
 
+## Player-driven receipt path
+
+The Angel Signal Integrator's next pressure was "build the graybox start/finish path + real claim/run-again UI binding so a fresh player can manually drive the receipt without the harness." This PR delivers it.
+
+The claim / run-again UI binding was already complete on main (the panel's `primary.Activated` handler fires `ClaimRewardRequested:FireServer(...)` and `RunAgainRequested:FireServer(...)` based on `currentMode`). The missing piece was the world-side triggers. `SignalRunCourse.server.luau` (above) closes that gap.
+
+Player flow:
+
+1. Spawn at the blue SpawnLocation.
+2. Walk forward onto the green StartPad → `RoundCompletionRewards.startRound(player)` → `round_started` emits.
+3. Walk to the red FinishPad → `RoundCompletionRewards.completeRound(player)` → `round_completed` + `reward_granted` emit, server `fireState` sends `RoundRewardStateChanged` to the client, reward panel becomes visible.
+4. Click Claim → `reward_claimed` emits, panel switches to Run Again mode.
+5. Click Run Again → `requestRunAgain` → `next_round_started` emits, panel hides.
+6. Player walks back to FinishPad (StartPad's debounce blocks a second `round_started`) and loops.
+
 ## What didn't ship in this PR
 
-These are next-block hints, in priority order. None block the receipt that the spec now emits.
+These are next-block hints, in priority order. None block the receipt the spec emits or the player-driven path the graybox enables.
 
-1. **Studio-runnable integration harness.** A server-side script that drives the real `RoundCompletionRewards` module (not the spec's isolated state) and prints the full snapshot from `TelemetryBuffer` would prove the integration end-to-end. Earlier draft of this PR included one (`SignalRunReceiptHarness.server.luau`); it was dropped because it would have duplicated the spec's logic against a synthetic `Player` fake, which expands architecture beyond the touch list. Re-add when Open Cloud Luau Execution lands (issue #31) and the harness can run headless against the real `Player` API.
-2. **CI does not yet run the spec.** The Polaxory CI workflow runs `stylua --check`, `selene src`, and `rojo build`. It does not yet run `tests/factory_slice_0.spec.luau`. PR #4 (`testez-harness`) ships the TestEZ runner; PR #4 is currently `CONFLICTING` against main and needs its `tests/README.md` conflict resolved before it can land. After PR #4 merges, a follow-up commit can add the TestEZ step to `.github/workflows/ci.yml` and gate this spec automatically.
-3. **`PROOF_RECEIPT_LEDGER.md`.** Referenced in the Ambition Heartbeat artifact at `projects/polaxory/ambition_heartbeat_2026-06-01T2127Z.md` as the place to append PR #11's receipt. The ledger file does not yet exist on main. Recommended: a follow-up commit creates `PROOF_RECEIPT_LEDGER.md` at repo root and appends references to this receipt as the first entry.
-4. **Graybox map.** A real player still can't drive the receipt — no start trigger, no finish trigger, no SignalFragment, no run path. The state machine and UI exist; the world doesn't. That's the next heavy-hitter block.
+1. **CI does not yet run the spec.** The Polaxory CI workflow runs `stylua --check`, `selene src`, and `rojo build`. It does not yet run `tests/factory_slice_0.spec.luau`. PR #4 (`testez-harness`) ships the TestEZ runner; PR #4 is currently `CONFLICTING` against main and needs its `tests/README.md` conflict resolved before it can land. After PR #4 merges, a follow-up commit can add the TestEZ step to `.github/workflows/ci.yml` and gate this spec automatically.
+2. **`PROOF_RECEIPT_LEDGER.md`.** Referenced in the Ambition Heartbeat artifact at `projects/polaxory/ambition_heartbeat_2026-06-01T2127Z.md` as the place to append PR #11's receipt. The ledger file does not yet exist on main. Recommended: a follow-up commit creates the ledger at repo root and appends references to this receipt as the first entry.
+3. **Studio-runnable integration harness.** A headless server script that drives the real `RoundCompletionRewards` module (not the spec's isolated state) and prints the full `TelemetryBuffer` snapshot would prove the integration end-to-end. Requires Open Cloud Luau Execution (issue #31) to run headless against the real `Player` API.
+4. **Course polish.** The graybox is functional but visually thin: no corridor walls, no SignalFragments to collect, no run timer, no fail state. Explicit non-goals for the receipt block — they belong to a "first-minute clarity" P2 follow-up.
 5. **Abuse caps from `POLAXORY_TOKEN_DIRECTION_v0.md`.** No 5-second replay cooldown, no daily/season cap, no bot/farm detection. Explicit non-goal for the receipt block.
 
 ## Doctrine compliance
 
 This PR passes the heavy hitter checklist in `automation_heavy_hitter_doctrine.md`:
 
-- **One block.** Fix main's CI; commit the receipt artifact.
-- **One heavy hitter.** Turning the receipt loop's CI from red to green so it can actually merge.
-- **One receipt.** The spec's 4-PASS output (above), now defended by green CI.
-- **One next-block hint.** Graybox map wiring (see "What didn't ship" #4).
+- **One block.** Unblock main's CI; ship the graybox course so a player can drive the receipt; commit the receipt artifact.
+- **One heavy hitter.** First merge that makes the receipt loop end-to-end player-drivable, green on CI.
+- **One receipt.** The spec's 4-PASS output (above), defended by green CI; the player-driven receipt (StartPad → FinishPad → Claim → Run Again) now reachable in Studio.
+- **One next-block hint.** `PROOF_RECEIPT_LEDGER.md` at repo root that lists this PR's receipt as entry #1.
 - **Did not:** spawn new automations, add lore, expand admin surface, write more planning docs unrelated to the receipt, refactor unrelated modules, push direct to main.
