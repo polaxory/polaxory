@@ -1,0 +1,23 @@
+{
+  "name": "polaxory-roblox-ops",
+  "version": "0.1.0",
+  "description": "RobloxOps surface for Polaxory. Wave-making in Roblox via Open Cloud API. v0.1 ships only the validation harness; full surface comes after operator approval of wave-attempts/001.",
+  "type": "module",
+  "scripts": {
+    "validate": "tsx src/validate-open-cloud.ts",
+    "validate:dry": "tsx src/validate-open-cloud.ts --dry-run",
+    "scrape": "tsx src/scrape-devforum.ts",
+    "scrape:all": "tsx src/scrape-devforum.ts --include-all"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.5.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

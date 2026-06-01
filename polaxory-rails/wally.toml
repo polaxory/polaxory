@@ -1,0 +1,27 @@
+[package]
+name = "polaxory/rails"
+version = "0.0.1"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+license = "MIT"
+description = "Polaxory's Roblox-native games-on-rails engine. Validated, interconnected game systems."
+
+# Production dependencies (shared between client + server).
+# Add carefully — every package in this list ships to production.
+[dependencies]
+# Knit framework — service/controller architecture, widely used in production Roblox games.
+# Uncomment when needed; Knit is recommended for Polaxory's services layer.
+# Knit = "sleitnick/knit@1.7.0"
+
+# Promise library for clean async handling.
+# Promise = "evaera/promise@4.0.0"
+
+# Signal — typed event bus, useful for the graph's edge implementations.
+# Signal = "sleitnick/signal@2.0.0"
+
+[server-dependencies]
+# Server-only packages live here.
+
+[dev-dependencies]
+# TestEZ for Lua testing
+# TestEZ = "roblox/testez@0.4.1"
