@@ -42,7 +42,10 @@ function TaskQueue:claimNext(worker)
 end
 
 function TaskQueue:transition(task, toState: string)
-	assert(TaskContracts.canTransition(task.state, toState), `invalid transition {task.state} -> {toState}`)
+	assert(
+		TaskContracts.canTransition(task.state, toState),
+		`invalid transition {task.state} -> {toState}`
+	)
 	task.state = toState
 	return task
 end
