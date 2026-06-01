@@ -42,6 +42,9 @@ assignees: ''
 
 <!-- What proves the work is done? TestEZ cases, CI green, manual verify, etc. -->
 
+- [ ] For playable-loop code changes, run the README guardrails from repo root: `stylua --check src`, `selene src`, and `rojo build default.project.json --output build.rbxlx`.
+- [ ] For docs-only changes, verify affected links/paths still point to existing files.
+
 ## Risks
 
 <!-- Failure modes, blast radius, things to be careful of. -->
