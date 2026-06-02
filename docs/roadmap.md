@@ -9,16 +9,32 @@ The rule: a surface earns a folder only when it has working metal. Until then it
 - **Validator patterns (partial)** — `src/server/Validators.luau` checks task/resource integrity. The full validator suite in `POLAXORY_VALIDATOR_CONTRACTS_v0.md` is mostly spec, not yet implemented.
 - **Read-only Studio inspection** — live DataModel/script inspection via MCP.
 
-## Future surfaces (NOT shipped — pressure points, not modules)
+## Next build — the validation kernel
 
-These are where the architecture is moving next. They are named, not built. None has a folder until it has metal.
+Per the 2026-06-02 CEO review (deep research `research/2026-06-02_third-party-opening.md`):
+the defensible, Roblox-proof wedge is a developer tool, not another game. Build **one kernel**:
 
-- **UGC generation pipeline** — agents producing content surfaces under contract.
-- **World memory** — persistence of world state, rules, and intent across iterations.
-- **Agent repair loop** — validator failures become structured feedback an agent acts on, not vibes.
-- **Playtest surface** — drive a real playtest, observe, feed results back.
-- **Validator suite (full)** — the 12 validators in `POLAXORY_VALIDATOR_CONTRACTS_v0.md` as an invocable, structured-verdict report (currently 0 of 12 implemented to spec).
-- **Roblox runtime hardening** — runtime rate-limit enforcement, exploit telemetry, anomaly detection.
+- **Validation kernel** — extract `RemoteContracts` + `Validators` into a standalone module
+  with a clean typed interface (in: remotes / AI-generated code; out: verdicts +
+  server-authoritative guarded output). Makes AI-generated remotes exploit-resistant by
+  construction. NOT welded into the game.
+- **Dogfood** — extend Signal Run with the purchase-spoof verification rail and run it
+  through the kernel, so the game proves the kernel catches a real exploit (Alkaline's loss).
+
+## Weaves on the kernel (NOT shipped — trajectory, held not built)
+
+Each calls the kernel; named here, shippable later without a rewrite, gated on real demand.
+None gets a folder until it has metal.
+
+- **W-A: game-system generation** — rails generate whole systems (the original "games on rails").
+- **W-B: agent-skill on Roblox's MCP seam** — any dev's AI code forced onto the rails. Purest wedge hit.
+- **W-UGC: UGC pipeline validation** — reuse the kernel's contract/validation on generated content.
+- **W-Web: web medium** — paste/connect code → validated output; paid access; real inference.
+- **W-Crypto: crypto rails** — pay-for-inference in crypto; a solo dev anywhere buys access with no LLC/processor.
+
+Supporting surfaces (still named, still unbuilt): world memory, agent repair loop, playtest
+harness for multiplayer/real-time (fills the Playtest Agent's disclosed gaps), full validator
+suite (0 of 12 implemented to spec), runtime hardening.
 
 ## Gating risk
 
