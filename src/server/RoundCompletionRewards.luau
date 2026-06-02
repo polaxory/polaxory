@@ -142,6 +142,16 @@ function RoundCompletionRewards.startRound(player: Player, sessionKey: string?):
 		sessionKey = state.sessionKey,
 		partySize = 1,
 	})
+	-- LOAD-BEARING: visible player-green receipt line per PROOF_RECEIPT_LEDGER.md
+	-- Entry 003. Do not remove without replacing with an equivalent observability path.
+	print(
+		string.format(
+			"[Polaxory] %s: %s for %s",
+			RewardLoopConfig.Events.RoundStarted,
+			state.sessionKey,
+			player.Name
+		)
+	)
 	return state
 end
 
@@ -162,6 +172,16 @@ function RoundCompletionRewards.markGatePassed(player: Player): boolean
 	emitTelemetry("GatePassed", {
 		sessionKey = state.sessionKey,
 	})
+	-- LOAD-BEARING: visible player-green receipt line per PROOF_RECEIPT_LEDGER.md
+	-- Entry 003. Do not remove without replacing with an equivalent observability path.
+	print(
+		string.format(
+			"[Polaxory] %s: %s for %s",
+			RewardLoopConfig.Events.GatePassed,
+			state.sessionKey,
+			player.Name
+		)
+	)
 	return true
 end
 
@@ -230,6 +250,16 @@ function RoundCompletionRewards.completeRound(
 			then payload.workersAssigned
 			else 0,
 	})
+	-- LOAD-BEARING: visible player-green receipt line per PROOF_RECEIPT_LEDGER.md
+	-- Entry 003. Do not remove without replacing with an equivalent observability path.
+	print(
+		string.format(
+			"[Polaxory] %s: %s for %s",
+			RewardLoopConfig.Events.RoundCompleted,
+			state.sessionKey,
+			player.Name
+		)
+	)
 	emitTelemetry("RewardGranted", {
 		sessionKey = state.sessionKey,
 		softCurrency = reward.amount,
