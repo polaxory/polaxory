@@ -24,6 +24,8 @@ RewardLoopConfig.Events = {
 	RejectedRunAgain = "rejected_run_again",
 	ReplayClicked = "replay_clicked",
 	NextRoundStarted = "next_round_started",
+	GatePassed = "gate_passed",
+	RoundFailed = "round_failed",
 }
 
 return RewardLoopConfig

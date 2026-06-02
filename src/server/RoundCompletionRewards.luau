@@ -25,10 +25,14 @@ type RoundState = {
 	grantedAt: number?,
 	claimedAt: number?,
 	pendingReward: CompletionReward?,
+	gatePassed: boolean,
 }
 
 local TELEMETRY_FOLDER_NAME = "PolaxoryTelemetryEvents"
 local REMOTE_FOLDER_NAME = "PolaxoryRemotes"
+-- 20-minute round-staleness ceiling per POLAXORY_TOKEN_DIRECTION_v0.md.
+-- A round that hasn't completed in this window is treated as abandoned.
+local STALE_ROUND_SECONDS = 1200
 
 local RoundCompletionRewards = {}
 local stateByPlayerKey: { [string]: RoundState } = {}
@@ -36,6 +40,10 @@ local handlersInstalled = false
 
 local function now(): number
 	return os.clock()
+end
+
+local function isStale(state: RoundState): boolean
+	return (now() - state.startedAt) > STALE_ROUND_SECONDS
 end
 
 local function playerKey(player: Player): string
@@ -127,6 +135,7 @@ function RoundCompletionRewards.startRound(player: Player, sessionKey: string?):
 	local state: RoundState = {
 		sessionKey = sessionKey or makeSessionKey(player),
 		startedAt = now(),
+		gatePassed = false,
 	}
 	stateByPlayerKey[playerKey(player)] = state
 	emitTelemetry("RoundStarted", {
@@ -136,6 +145,46 @@ function RoundCompletionRewards.startRound(player: Player, sessionKey: string?):
 	return state
 end
 
+function RoundCompletionRewards.markGatePassed(player: Player): boolean
+	local key = playerKey(player)
+	local state = stateByPlayerKey[key]
+	if state == nil then
+		return false
+	end
+	if isStale(state) then
+		stateByPlayerKey[key] = nil
+		return false
+	end
+	if state.gatePassed then
+		return true
+	end
+	state.gatePassed = true
+	emitTelemetry("GatePassed", {
+		sessionKey = state.sessionKey,
+	})
+	return true
+end
+
+function RoundCompletionRewards.failRound(player: Player, reason: string): boolean
+	local key = playerKey(player)
+	local state = stateByPlayerKey[key]
+	if state == nil then
+		return false
+	end
+	stateByPlayerKey[key] = nil
+	emitTelemetry("RoundFailed", {
+		sessionKey = state.sessionKey,
+		reason = reason,
+	})
+	local response = {
+		event = RewardLoopConfig.Events.RoundFailed,
+		sessionKey = state.sessionKey,
+		reason = reason,
+	}
+	fireState(player, response)
+	return true
+end
+
 function RoundCompletionRewards.completeRound(
 	player: Player,
 	payload: { [string]: any }?
@@ -143,10 +192,17 @@ function RoundCompletionRewards.completeRound(
 	local key = playerKey(player)
 	local state = stateByPlayerKey[key]
 	if state == nil then
-		state = RoundCompletionRewards.startRound(
-			player,
-			if payload ~= nil then payload.sessionKey else nil
-		)
+		-- Hardened: no auto-start. Finish without start is a contract violation.
+		return reject(player, nil, RewardLoopConfig.Events.RejectedClaim, "no_active_round")
+	end
+
+	if isStale(state) then
+		stateByPlayerKey[key] = nil
+		return reject(player, state, RewardLoopConfig.Events.RejectedClaim, "round_expired")
+	end
+
+	if not state.gatePassed then
+		return reject(player, state, RewardLoopConfig.Events.RejectedClaim, "gate_not_passed")
 	end
 
 	if state.pendingReward ~= nil or state.grantedAt ~= nil then
@@ -306,6 +362,13 @@ function RoundCompletionRewards.installRemoteHandlers()
 			RoundCompletionRewards.requestRunAgain(player, payload)
 		end
 	)
+
+	-- Disconnect cleanup: drop the player's RoundState the moment they leave
+	-- so stateByPlayerKey can't accumulate ghost entries across sessions.
+	local Players = game:GetService("Players")
+	Players.PlayerRemoving:Connect(function(player: Player)
+		stateByPlayerKey[playerKey(player)] = nil
+	end)
 
 	print(
 		"[Polaxory] reward claim/replay remotes ready",
