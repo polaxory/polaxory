@@ -28,6 +28,7 @@ Current implementation target:
 Acceptance check: each transition in the proof loop should be traceable to one server-owned state change and, for the reward path, the player-visible `reward_shown` feedback point before new rails or lore are added.
 ## Small-change rule
 When improving the repo, keep each commit to one narrow artifact or clarification so the rails stay auditable. Prefer tightening an existing active doc or file over adding a new artifact unless the current load order needs it.
+For docs-only edits, clarify an existing decision, acceptance check, or guardrail; avoid adding new scope, lore, or implementation promises.
 ## Local guardrails
 The pinned local tools live in `aftman.toml`. If `stylua`, `selene`, or `rojo` are missing, run `aftman install` from the repository root before running checks.
 Before committing code changes to the playable loop, run the same checks CI uses from the repository root:
