@@ -9,6 +9,113 @@ the receipt for that block is not yet green.
 
 ---
 
+## Entry 003 — Timing Gate v0: the first fail-able toy (TEMPLATE)
+
+Status: PENDING STUDIO PROOF
+
+Date: 2026-06-01
+PR: #14 (in flight on `add-round-start-completion-prints`)
+Commit: TBD (once this commit pushes)
+
+### What this commit adds
+
+A single server-recognized checkpoint between EnterTrigger and ExitTrigger. The
+player can now FAIL before reaching the exit. The receipt loop goes from "walk down
+a hallway and click a button" to "time a touch, or get reset." That is the first
+playable toy.
+
+Server-side (`src/server/RoundCompletionRewards.luau`):
+
+- `RoundState` gains `gatePassed: boolean` (init `false`).
+- `completeRound` rejects with `RejectedClaim/gate_not_passed` when `state.gatePassed`
+  is false. The check sits between the stale-round sweep and the duplicate-finish
+  guard so the existing hardening contracts still apply.
+- New exported `markGatePassed(player)`: finds state, no-ops if stale (drops state)
+  or already passed, otherwise flips the flag and emits `GatePassed` telemetry.
+- New exported `failRound(player, reason)`: drops the player's state, emits
+  `RoundFailed` telemetry, and fires `RoundRewardStateChanged` so the client panel
+  can react.
+- `RewardLoopConfig.Events` gains `GatePassed` and `RoundFailed`.
+
+Course-side (`src/server/SignalRunCourse.server.luau`):
+
+- New optional trigger discovery for `TimingGate` (BasePart child of
+  `Workspace.PolaxoryBackroomsSlice0`).
+- When found: a `task.spawn` coroutine toggles `gateIsOpen` and the part's `Color`
+  on a 3-seconds-open / 2-seconds-closed cycle. Green `(60, 220, 120)` when open,
+  red `(220, 80, 60)` when closed.
+- `TimingGate.Touched`: if open, `markGatePassed(player)`; if closed,
+  `failRound(player, "gate_closed")`. Per-player 1-second debounce on the gate.
+- If `TimingGate` is missing from Studio, script warns and continues; the receipt
+  loop still binds Enter/Exit but completeRound will always reject (no path to
+  passing the gate).
+
+Tests (`tests/factory_slice_0.spec.luau`):
+
+- Harness `state` extended with `gatePassed: boolean`; `clearState` and
+  `resetForFreshRound` both reset it.
+- New harness methods: `markGatePassed()`, `failRound(reason)`.
+- `finishRound` now rejects with `rejected_finish:gate_not_passed` when
+  `state.gatePassed` is false.
+- Existing tests `runValidLoop`, `runDuplicateFinishGuard`, `runDuplicateClaimGuard`
+  updated to call `markGatePassed()` before `finishRound()`.
+- `runValidLoop`'s receipt is now
+  `round_started -> gate_passed -> round_completed -> reward_granted -> reward_claimed -> next_round_started`.
+- New test `runGateNotPassedGuard` — startRound, skip gate, finishRound, asserts
+  `rejected_finish:gate_not_passed`.
+- New test `runFailRoundCleanupGuard` — startRound, failRound("gate_closed"),
+  asserts state cleared, finishRound rejects as no_active_round, then a fresh
+  startRound + markGatePassed + finishRound reaches `reward_granted` (proving the
+  player can improve on retry).
+
+### Code / test gates
+
+| Gate | Result | Evidence |
+|---|---|---|
+| `stylua --check src` | ✅ PASS | exit 0, no diffs (stylua 0.20.0) |
+| `selene src` | ✅ PASS | 0 errors, 0 warnings (selene 0.31.0 local; 0.27.1 in CI) |
+| `lune run tests/factory_slice_0.spec.luau` | ✅ PASS | 9/9 PASS lines (see below) |
+| CI on the PR head | TBD until push | `luau-guardrails` job |
+
+Local lune output:
+
+```
+PASS valid loop
+PASS duplicate finish
+PASS duplicate claim
+PASS claim-before-completion
+PASS finish-before-start
+PASS disconnect cleanup
+PASS stale-round cleanup
+PASS gate-not-passed
+PASS fail-round cleanup
+```
+
+### Studio receipt (operator fills after manual drive)
+
+Operator action: in Studio, add a `TimingGate` BasePart inside `Workspace.PolaxoryBackroomsSlice0` between EnterTrigger and ExitTrigger. Save the `.rbxl`. Then drive:
+
+- Spawn: TBD
+- EnterTrigger: TBD
+- Timing Gate attempted (touched while green AND touched while red, at least once each): TBD
+- Failure path tested (touched while red, observed `round_failed:gate_closed` and reset): TBD
+- Success reached ExitTrigger (touched gate while green, walked to ExitTrigger, `round_completed` fired): TBD
+- Claim: TBD
+- Run Again: TBD
+- Fresh attempt starts: TBD
+
+### Fun proof (operator's judgment after one drive)
+
+- Can fail: yes / no
+- Can improve: yes / no
+- Meaningful action before ExitTrigger: yes / no
+
+### Result
+
+TBD — PASS or FAIL with named first blocker
+
+---
+
 ## Entry 002 — Round-loop hardening + meaningful CI (TEMPLATE)
 
 Status: PENDING STUDIO PROOF

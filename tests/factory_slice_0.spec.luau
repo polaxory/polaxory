@@ -18,6 +18,7 @@ type State = {
 	claimed: boolean,
 	reward: Reward?,
 	startedAtMs: number,
+	gatePassed: boolean,
 }
 
 local STALE_ROUND_MS = 1_200_000 -- mirrors STALE_ROUND_SECONDS = 1200 in RoundCompletionRewards.luau
@@ -39,6 +40,7 @@ local function newHarness()
 		claimed = false,
 		reward = nil,
 		startedAtMs = 0,
+		gatePassed = false,
 	}
 	local receipt = {}
 	local nowMs = 0
@@ -55,6 +57,7 @@ local function newHarness()
 		state.claimed = false
 		state.reward = nil
 		state.startedAtMs = 0
+		state.gatePassed = false
 	end
 
 	local function resetForFreshRound()
@@ -65,6 +68,7 @@ local function newHarness()
 		state.claimed = false
 		state.reward = nil
 		state.startedAtMs = nowMs
+		state.gatePassed = false
 	end
 
 	return {
@@ -89,6 +93,25 @@ local function newHarness()
 			resetForFreshRound()
 			return emit("round_started")
 		end,
+		markGatePassed = function()
+			if not state.started then
+				return emit("rejected_gate:no_active_round")
+			end
+			if (nowMs - state.startedAtMs) > STALE_ROUND_MS then
+				clearState()
+				return emit("rejected_gate:round_expired")
+			end
+			state.gatePassed = true
+			return emit("gate_passed")
+		end,
+		failRound = function(reason: string)
+			if not state.started then
+				return emit("rejected_fail:no_active_round")
+			end
+			local sessionEnd = "round_failed:" .. reason
+			clearState()
+			return emit(sessionEnd)
+		end,
 		finishRound = function()
 			if not state.started then
 				return emit("rejected_finish:no_active_round")
@@ -96,6 +119,9 @@ local function newHarness()
 			if (nowMs - state.startedAtMs) > STALE_ROUND_MS then
 				clearState()
 				return emit("rejected_finish:round_expired")
+			end
+			if not state.gatePassed then
+				return emit("rejected_finish:gate_not_passed")
 			end
 			if state.granted then
 				return emit("rejected_claim:duplicate_finish")
@@ -140,6 +166,7 @@ local function runValidLoop()
 	local h = newHarness()
 	h.startRound()
 	assertEqual(h.currentRoundId(), 1, "initial round id")
+	h.markGatePassed()
 	h.finishRound()
 	h.claimReward()
 	h.runAgain()
@@ -147,7 +174,7 @@ local function runValidLoop()
 	assertEqual(h.hasPendingReward(), false, "fresh round has no pending reward")
 	assertEqual(
 		table.concat(h.receipt, " -> "),
-		"round_started -> round_completed -> reward_granted -> reward_claimed -> next_round_started",
+		"round_started -> gate_passed -> round_completed -> reward_granted -> reward_claimed -> next_round_started",
 		"valid loop receipt"
 	)
 	return "PASS valid loop"
@@ -156,6 +183,7 @@ end
 local function runDuplicateFinishGuard()
 	local h = newHarness()
 	h.startRound()
+	h.markGatePassed()
 	h.finishRound()
 	local rejected = h.finishRound()
 	assertEqual(rejected, "rejected_claim:duplicate_finish", "duplicate finish")
@@ -165,6 +193,7 @@ end
 local function runDuplicateClaimGuard()
 	local h = newHarness()
 	h.startRound()
+	h.markGatePassed()
 	h.finishRound()
 	h.claimReward()
 	local rejected = h.claimReward()
@@ -218,6 +247,38 @@ local function runStaleRoundCleanupGuard()
 	return "PASS stale-round cleanup"
 end
 
+local function runGateNotPassedGuard()
+	-- Timing Gate v0: a fresh round whose player has not touched the gate (or
+	-- touched it while closed) must reject completion. Mirrors completeRound
+	-- returning RejectedClaim/gate_not_passed when state.gatePassed is false.
+	local h = newHarness()
+	h.startRound()
+	-- intentionally skip markGatePassed
+	local rejected = h.finishRound()
+	assertEqual(rejected, "rejected_finish:gate_not_passed", "finish without gate passed")
+	return "PASS gate-not-passed"
+end
+
+local function runFailRoundCleanupGuard()
+	-- Timing Gate v0 fail path: touching the closed gate (or any hazard call to
+	-- failRound) clears the player's state and emits round_failed:<reason>.
+	-- A subsequent finish must reject as no_active_round.
+	local h = newHarness()
+	h.startRound()
+	local failed = h.failRound("gate_closed")
+	assertEqual(failed, "round_failed:gate_closed", "fail round emits round_failed:<reason>")
+	assertEqual(h.isStateCleared(), true, "state cleared after failRound")
+	local rejected = h.finishRound()
+	assertEqual(rejected, "rejected_finish:no_active_round", "finish after fail rejected")
+	-- Player can re-enter and run again cleanly
+	h.startRound()
+	h.markGatePassed()
+	h.finishRound()
+	local granted = h.receipt[#h.receipt]
+	assertEqual(granted, "reward_granted", "fresh attempt after fail reaches reward_granted")
+	return "PASS fail-round cleanup"
+end
+
 local receipt = {
 	runValidLoop(),
 	runDuplicateFinishGuard(),
@@ -226,6 +287,8 @@ local receipt = {
 	runFinishBeforeStartGuard(),
 	runDisconnectCleanupGuard(),
 	runStaleRoundCleanupGuard(),
+	runGateNotPassedGuard(),
+	runFailRoundCleanupGuard(),
 }
 
 -- Print so CI logs surface the receipt explicitly; lune exit code already gates failures.

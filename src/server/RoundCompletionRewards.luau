@@ -25,6 +25,7 @@ type RoundState = {
 	grantedAt: number?,
 	claimedAt: number?,
 	pendingReward: CompletionReward?,
+	gatePassed: boolean,
 }
 
 local TELEMETRY_FOLDER_NAME = "PolaxoryTelemetryEvents"
@@ -134,6 +135,7 @@ function RoundCompletionRewards.startRound(player: Player, sessionKey: string?):
 	local state: RoundState = {
 		sessionKey = sessionKey or makeSessionKey(player),
 		startedAt = now(),
+		gatePassed = false,
 	}
 	stateByPlayerKey[playerKey(player)] = state
 	emitTelemetry("RoundStarted", {
@@ -141,6 +143,46 @@ function RoundCompletionRewards.startRound(player: Player, sessionKey: string?):
 		partySize = 1,
 	})
 	return state
+end
+
+function RoundCompletionRewards.markGatePassed(player: Player): boolean
+	local key = playerKey(player)
+	local state = stateByPlayerKey[key]
+	if state == nil then
+		return false
+	end
+	if isStale(state) then
+		stateByPlayerKey[key] = nil
+		return false
+	end
+	if state.gatePassed then
+		return true
+	end
+	state.gatePassed = true
+	emitTelemetry("GatePassed", {
+		sessionKey = state.sessionKey,
+	})
+	return true
+end
+
+function RoundCompletionRewards.failRound(player: Player, reason: string): boolean
+	local key = playerKey(player)
+	local state = stateByPlayerKey[key]
+	if state == nil then
+		return false
+	end
+	stateByPlayerKey[key] = nil
+	emitTelemetry("RoundFailed", {
+		sessionKey = state.sessionKey,
+		reason = reason,
+	})
+	local response = {
+		event = RewardLoopConfig.Events.RoundFailed,
+		sessionKey = state.sessionKey,
+		reason = reason,
+	}
+	fireState(player, response)
+	return true
 end
 
 function RoundCompletionRewards.completeRound(
@@ -157,6 +199,10 @@ function RoundCompletionRewards.completeRound(
 	if isStale(state) then
 		stateByPlayerKey[key] = nil
 		return reject(player, state, RewardLoopConfig.Events.RejectedClaim, "round_expired")
+	end
+
+	if not state.gatePassed then
+		return reject(player, state, RewardLoopConfig.Events.RejectedClaim, "gate_not_passed")
 	end
 
 	if state.pendingReward ~= nil or state.grantedAt ~= nil then
