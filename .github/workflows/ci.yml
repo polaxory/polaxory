@@ -27,5 +27,7 @@ jobs:
         run: selene src
       - name: Run Luau spec
         run: lune run tests/factory_slice_0.spec.luau
+      - name: Run purchase receipt rail spec
+        run: lune run tests/purchase_receipt_rail.spec.luau
       - name: Rojo build
         run: rojo build default.project.json --output build.rbxlx
