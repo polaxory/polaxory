@@ -37,7 +37,7 @@ stylua --check src
 selene src
 rojo build default.project.json --output build.rbxlx
 ```
-For docs-only changes that do not touch `src`, `default.project.json`, or tool config, note that the guardrail checks were not required rather than forcing a no-op local build.
+For docs-only changes that do not touch `src`, `default.project.json`, or tool config, note that the guardrail checks were not required rather than forcing a no-op local build. This includes edits limited to README files, issue templates, or `docs/` content.
 These checks keep local edits aligned with the repo’s format, lint, and Studio-build expectations.
 ## Cut line
 No more pitch sprawl. Build the playable loop, prove the reward claim, then improve feel.
