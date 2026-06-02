@@ -7,6 +7,7 @@
 local ServerScriptService = game:GetService("ServerScriptService")
 
 local TelemetryBuffer = require(script.Parent:WaitForChild("TelemetryBuffer"))
+local TelemetrySink = require(script.Parent:WaitForChild("TelemetrySink"))
 
 local BUILD_LABEL = "polaxory-telemetry-loop-v0"
 local FOLDER_NAME = "PolaxoryTelemetryEvents"
@@ -115,6 +116,7 @@ end)
 snapshotRequested.Event:Connect(function()
 	local snapshot = buffer:snapshot()
 	print("[PolaxoryTelemetrySnapshot]", snapshot)
+	TelemetrySink.persist(snapshot)
 end)
 
 print("[PolaxoryTelemetry] loop seam ready:", FOLDER_NAME)

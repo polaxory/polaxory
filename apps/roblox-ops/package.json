@@ -6,6 +6,8 @@
   "scripts": {
     "validate": "tsx src/validate-open-cloud.ts",
     "validate:dry": "tsx src/validate-open-cloud.ts --dry-run",
+    "telemetry:read": "tsx src/read-telemetry.ts",
+    "telemetry:read:dry": "tsx src/read-telemetry.ts --dry-run",
     "scrape": "tsx src/scrape-devforum.ts",
     "scrape:all": "tsx src/scrape-devforum.ts --include-all"
   },
