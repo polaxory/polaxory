@@ -42,9 +42,22 @@ echo "  $(aftman --version)"
 print_step "Installing pinned tools (rojo, stylua, selene) from aftman.toml..."
 aftman install --no-trust-check >/dev/null
 
+# aftman installs to ~/.aftman/bin/. If that's not on PATH yet (common on a
+# first-time setup), put it on PATH for this script and tell the user how to
+# make it permanent.
+AFTMAN_BIN="$HOME/.aftman/bin"
 if ! command -v rojo >/dev/null 2>&1; then
-	echo "ERROR: rojo missing after aftman install. Check aftman.toml."
-	exit 1
+	if [ -x "$AFTMAN_BIN/rojo" ]; then
+		export PATH="$AFTMAN_BIN:$PATH"
+		echo "  Note: added $AFTMAN_BIN to PATH for this script."
+		echo "  To make it permanent, run:"
+		echo "    echo 'export PATH=\"\$HOME/.aftman/bin:\$PATH\"' >> ~/.zshrc"
+		echo "    source ~/.zshrc"
+	else
+		echo "ERROR: rojo missing at $AFTMAN_BIN/rojo after aftman install."
+		echo "  Check aftman.toml and the install log above."
+		exit 1
+	fi
 fi
 echo "  $(rojo --version)"
 
